@@ -2,6 +2,7 @@
 
 import { createElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getProvider } from "@/lib/providers";
+import { isShortcut, useShortcutLabel } from "@/lib/shortcut";
 import {
   WORDMARK_SIZE,
   getProviderIcon,
@@ -166,18 +167,22 @@ function ComparePanel({
  * against yet, so the invitation is panel-sized and sits where the second world
  * will land.
  */
-function AddPanel({ onClick }: { onClick: () => void }) {
+function AddPanel({ onClick, shortcut }: { onClick: () => void; shortcut: string | null }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      title="Add a model (⌘K)"
       className="group flex min-h-[12rem] flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-line text-mist transition-colors hover:border-mist hover:text-mist-bright"
     >
       <span className="flex h-10 w-10 items-center justify-center rounded-full border border-line transition-colors group-hover:border-mist">
         <PlusIcon className="h-5 w-5" />
       </span>
       <span className="text-[11px] uppercase tracking-[0.15em]">Add model</span>
+      {shortcut && (
+        <kbd className="rounded border border-line px-1.5 py-0.5 text-[10px] tracking-wide">
+          {shortcut}
+        </kbd>
+      )}
     </button>
   );
 }
@@ -187,16 +192,26 @@ function AddPanel({ onClick }: { onClick: () => void }) {
  * small and under the worlds so it takes room from them rather than standing in
  * for one of them.
  */
-function AddButton({ onClick }: { onClick: () => void }) {
+function AddButton({
+  onClick,
+  shortcut,
+}: {
+  onClick: () => void;
+  shortcut: string | null;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
-      title="Add a model (⌘K)"
       className="flex h-9 shrink-0 items-center gap-2 rounded-lg border border-dashed border-line px-3 text-mist transition-colors hover:border-mist hover:text-mist-bright"
     >
       <PlusIcon className="h-4 w-4" />
       <span className="text-[10px] uppercase tracking-[0.15em]">Add model</span>
+      {shortcut && (
+        <kbd className="rounded border border-line px-1.5 py-0.5 text-[10px] tracking-wide">
+          {shortcut}
+        </kbd>
+      )}
     </button>
   );
 }
@@ -341,6 +356,7 @@ export default function CompareModels({
   const [picking, setPicking] = useState(false);
   const [panels, setPanels] = useState<CompareEntry[]>([current]);
   const gridRef = useRef<HTMLDivElement>(null);
+  const shortcut = useShortcutLabel("K");
 
   const close = useCallback(() => {
     setOpen(false);
@@ -362,7 +378,7 @@ export default function CompareModels({
     function onKeyDown(e: KeyboardEvent) {
       // ⌘K / Ctrl+K opens the picker from anywhere in the dialog. Only bound
       // while the dialog is open, so the page keeps the shortcut otherwise.
-      if (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey)) {
+      if (isShortcut(e, "k")) {
         e.preventDefault();
         if (canAdd) setPicking(true);
         return;
@@ -477,12 +493,16 @@ export default function CompareModels({
                 ))}
                 {/* An odd count leaves a cell free on the last row — that gap is
                     where the next world goes, so the slot fills it. */}
-                {canAdd && hasFreeCell && <AddPanel onClick={() => setPicking(true)} />}
+                {canAdd && hasFreeCell && (
+                  <AddPanel onClick={() => setPicking(true)} shortcut={shortcut} />
+                )}
               </div>
               {/* An even count fills the rows, so the slot drops below as a small
                   button rather than opening a row of its own and shrinking every
                   world to make space for an empty tile. */}
-              {canAdd && !hasFreeCell && <AddButton onClick={() => setPicking(true)} />}
+              {canAdd && !hasFreeCell && (
+                <AddButton onClick={() => setPicking(true)} shortcut={shortcut} />
+              )}
             </div>
 
             {picking && (

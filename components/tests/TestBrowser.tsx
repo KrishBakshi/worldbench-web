@@ -1,14 +1,33 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Test } from "@/lib/tests";
 import TestCard from "@/components/TestCard";
+import { isShortcut, useShortcutLabel } from "@/lib/shortcut";
 
 export interface ProviderOption {
   /** Provider slug, matching Test.provider. */
   slug: string;
   /** Company name shown on the badge. */
   name: string;
+}
+
+function SearchIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="h-4 w-4 shrink-0 text-mist"
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  );
 }
 
 export default function TestBrowser({
@@ -21,6 +40,22 @@ export default function TestBrowser({
   const [query, setQuery] = useState("");
   // One provider selected at a time; null means "all".
   const [active, setActive] = useState<string | null>(null);
+  const [focused, setFocused] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const shortcut = useShortcutLabel("K");
+
+  // ⌘K / Ctrl+K puts the cursor in the search field from anywhere on the page,
+  // selecting what's there so a second search just overtypes the first.
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (!isShortcut(e, "k")) return;
+      e.preventDefault();
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   // Provider name by slug, so search can also match the company label.
   const providerName = useMemo(() => {
@@ -56,14 +91,28 @@ export default function TestBrowser({
   return (
     <div>
       <div className="mb-6 flex flex-col gap-4">
-        <input
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search tests by name, model, or provider…"
-          aria-label="Search tests"
-          className="w-full border-0 border-b border-line bg-transparent px-0 py-2 text-sm text-mist-bright placeholder:text-mist focus:border-mist focus:outline-none"
-        />
+        <div className="flex items-center gap-3 border-b border-line focus-within:border-mist">
+          <SearchIcon />
+          <input
+            ref={inputRef}
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            placeholder="Search tests by name, model, or provider…"
+            aria-label="Search tests"
+            className="min-w-0 flex-1 border-0 bg-transparent px-0 py-2 text-sm text-mist-bright placeholder:text-mist focus:outline-none"
+          />
+          {/* The shortcut is only worth naming while it's the way in — once the
+              field has the cursor, the hint is describing what already
+              happened. Spelled with the modifier this machine actually uses. */}
+          {shortcut && !focused && !query && (
+            <kbd className="hidden shrink-0 rounded border border-line px-1.5 py-0.5 text-[10px] tracking-wide text-mist sm:block">
+              {shortcut}
+            </kbd>
+          )}
+        </div>
 
         <div className="flex flex-wrap gap-2">
           {providers.map((provider) => {
