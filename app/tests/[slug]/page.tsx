@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { getAllTests, getTestBySlug } from "@/lib/tests";
+import { getAllTests, getTestBySlug, type Test } from "@/lib/tests";
 import WorldEmbed from "@/components/tests/WorldEmbed";
+import CompareModels, { type CompareEntry } from "@/components/tests/CompareModels";
 import XPostEmbed from "@/components/tests/XPostEmbed";
 import ProviderByline from "@/components/tests/ProviderByline";
 import ContributeCTA from "@/components/tests/ContributeCTA";
@@ -55,6 +56,18 @@ export default async function TestDetailPage({
       })
     : "";
 
+  // Every test is a candidate for the comparison grid, trimmed to the fields it
+  // labels a panel with so the MDX bodies stay on the server.
+  const toCompareEntry = (t: Test): CompareEntry => ({
+    slug: t.slug,
+    title: t.title,
+    model: t.model,
+    provider: t.provider,
+    worldHtmlSrc: t.worldHtmlSrc,
+  });
+  const compareCurrent = toCompareEntry(test);
+  const compareEntries = getAllTests().map(toCompareEntry);
+
   return (
     <section className="mx-auto max-w-3xl px-6 py-10 md:px-10">
       <Link href="/tests" className="text-sm text-mist hover:text-mist-bright">
@@ -98,11 +111,19 @@ export default async function TestDetailPage({
         <WorldEmbed src={test.worldHtmlSrc} />
       </div>
 
-      {test.xPostUrl && (
-        <div className="mt-4">
-          <XPostEmbed url={test.xPostUrl} />
-        </div>
-      )}
+      {/* The row under the world: the comparison opener first, then the link out
+          to the walkthrough post, separated by a rule. */}
+      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
+        <CompareModels current={compareCurrent} entries={compareEntries} />
+        {test.xPostUrl && (
+          <>
+            <span aria-hidden="true" className="text-line select-none">
+              |
+            </span>
+            <XPostEmbed url={test.xPostUrl} />
+          </>
+        )}
+      </div>
 
       {test.content && (
         <div className="prose mt-8 max-w-none text-sm">

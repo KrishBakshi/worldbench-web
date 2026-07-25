@@ -32,7 +32,9 @@ Three pages:
 - **View Tests**: a grid of every test, searchable by name, model, or
   provider and filterable by provider badge, each card opening into its own
   page with an intro clip, the test date, and the live, interactive
-  `world.html` embedded below it.
+  `world.html` embedded below it. Under that world, **Compare models**
+  opens a grid that puts it side by side with the worlds from up to five
+  other tests, added one panel at a time.
 
 ## Adding a test
 
