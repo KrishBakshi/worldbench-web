@@ -23,6 +23,12 @@ export interface Test {
   /** One or two sentences, shown under the title and used as the meta description. */
   summary: string;
   worldHtmlSrc: string;
+  /**
+   * The legend-free build of the same world, used by the comparison grid. Falls
+   * back to world.html for a test that hasn't got one, so a missing preview
+   * shows the world with its overlays rather than an empty panel.
+   */
+  worldPreviewSrc: string;
   content: string;
 }
 
@@ -57,6 +63,9 @@ function loadTest(slug: string): Test | null {
     xPostUrl: typeof data.xPost === "string" ? data.xPost : null,
     summary: typeof data.summary === "string" ? data.summary : "",
     worldHtmlSrc: `/tests/${slug}/world.html`,
+    worldPreviewSrc: fs.existsSync(path.join(dir, "world-preview.html"))
+      ? `/tests/${slug}/world-preview.html`
+      : `/tests/${slug}/world.html`,
     content: content.trim(),
   };
 }

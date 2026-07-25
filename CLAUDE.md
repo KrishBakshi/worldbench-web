@@ -26,8 +26,9 @@ this file" language into the model-facing text.
 - `public/tests/<slug>/`: the site's content model. Each folder is one
   test: `meta.mdx` (frontmatter: `title`, `model`, `provider`, `date`,
   `pinned`, plus optional `summary`, `xPost`, and a notes body), an optional
-  `intro.mp4` / `intro.webm` / `intro.gif`, and the actual `world.html`
-  output. Adding a new test is just adding a new folder, no code changes
+  `intro.mp4` / `intro.webm` / `intro.gif`, and two builds of the output —
+  `world.html` and `world-preview.html` (see **Preview builds** below).
+  Adding a new test is just adding a new folder, no code changes
   needed. `pinned: true` tests (up to 4, most recent first) show on the home
   page under "See Recent Tests"; all tests show on `/tests`. `provider` keys
   into `lib/providers.ts` for the company name, and into
@@ -46,6 +47,40 @@ this file" language into the model-facing text.
   (validators, schema, scored outputs, prior prompt pipeline). Not part of
   the live project; kept for reference only. It is also the source of the
   current seed tests in `public/tests/` (copied out, not itself shipped).
+
+## Preview builds
+
+Every test ships its world twice:
+
+1. `world.html` — the model's raw output, untouched. This is what
+   `/tests/<slug>` embeds and what "open in dedicated window" serves.
+2. `world-preview.html` — the same world with its **legends and HUD chrome
+   taken out of the render**. This is the only thing the comparison grid
+   loads.
+
+**Comparison views must never show legends.** Comparing models is a
+high-level, visual judgement — is this island good? — and every world
+draws its own biome list, clock, weather readout and control hints over
+the scene. Four of those at once is four different UIs arguing with each
+other instead of four islands next to each other. So the chrome comes off
+before a world goes in the grid, always.
+
+The preview is generated, not hand-edited: copy `world.html` verbatim and
+append one block before `</body>` that comments the overlay out of the
+render, listing that world's own top-level overlay ids. Leave loading
+indicators alone — they remove themselves once the scene is up.
+
+Hide the overlay rather than deleting its markup. Most of these worlds
+populate their legend from script (`getElementById('legend').innerHTML =
+…`); cut the element and that lookup returns null, the script throws
+part-way through setup, and the panel goes black. The element has to stay
+in the document for the world to keep running — what gets removed is the
+display.
+
+When adding a test, generate its preview in the same batch. A folder with
+no `world-preview.html` still works — `lib/tests.ts` falls back to
+`world.html` — but it falls back to a world with legends, which is the
+thing the grid exists to avoid.
 
 ## Conventions
 - Front-end only: no backend, no database, no API routes. `npm install &&
