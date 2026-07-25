@@ -174,7 +174,7 @@ function AddPanel({ onClick, shortcut }: { onClick: () => void; shortcut: string
       onClick={onClick}
       className="group flex min-h-[12rem] flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-line text-mist transition-colors hover:border-mist hover:text-mist-bright"
     >
-      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-line transition-colors group-hover:border-mist">
+      <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-line transition-colors group-hover:border-mist">
         <PlusIcon className="h-5 w-5" />
       </span>
       <span className="text-[11px] uppercase tracking-[0.15em]">Add model</span>
