@@ -63,7 +63,7 @@ export default async function TestDetailPage({
     title: t.title,
     model: t.model,
     provider: t.provider,
-    worldHtmlSrc: t.worldHtmlSrc,
+    worldPreviewSrc: t.worldPreviewSrc,
   });
   const compareCurrent = toCompareEntry(test);
   const compareEntries = getAllTests().map(toCompareEntry);
