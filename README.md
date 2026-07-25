@@ -44,6 +44,10 @@ Drop a new folder in `public/tests/<slug>/` with:
   keys into the company name and logo; leave it out for non-model entries
   like the hand-tuned reference.
 - `world.html`: the model's raw output
+- `world-preview.html`: the same world with its legend / HUD overlays
+  commented out of the render, which is what the comparison grid loads.
+  Comparing islands side by side means comparing islands, not four
+  different HUDs at once.
 - optionally `intro.mp4` / `intro.webm` / `intro.gif`
 
 No code changes needed, the site reads `public/tests/` at build time.
