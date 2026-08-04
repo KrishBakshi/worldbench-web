@@ -17,6 +17,7 @@ export const PROVIDERS: Record<string, Provider> = {
   alibaba: { name: "Alibaba" },
   moonshot: { name: "Moonshot AI" },
   zai: { name: "Z.ai" },
+  deepseek: { name: "DeepSeek" },
 };
 
 export function getProvider(slug: string | null): Provider | null {
