@@ -6,6 +6,7 @@ import GrokIcon from "./grok";
 import QwenIcon from "./qwen";
 import KimiIcon from "./kimi";
 import ZaiIcon from "./zai";
+import DeepSeekIcon from "./deepseek";
 import AnthropicTextIcon from "./anthropic-text";
 import OpenAITextIcon from "./openai-text";
 import GoogleTextIcon from "./google-text";
@@ -13,6 +14,7 @@ import XaiTextIcon from "./xai-text";
 import AlibabaTextIcon from "./alibaba-text";
 import MoonshotTextIcon from "./moonshot-text";
 import ZaiTextIcon from "./zai-text";
+import DeepSeekTextIcon from "./deepseek-text";
 import type { WordmarkProps } from "./wordmark";
 
 export type { WordmarkProps };
@@ -36,6 +38,7 @@ export const PROVIDER_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement
   alibaba: QwenIcon,
   moonshot: KimiIcon,
   zai: ZaiIcon,
+  deepseek: DeepSeekIcon,
 };
 
 export function getProviderIcon(
@@ -61,6 +64,7 @@ export const PROVIDER_WORDMARKS: Record<string, ComponentType<WordmarkProps>> = 
   alibaba: AlibabaTextIcon,
   moonshot: MoonshotTextIcon,
   zai: ZaiTextIcon,
+  deepseek: DeepSeekTextIcon,
 };
 
 /**
