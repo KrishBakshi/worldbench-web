@@ -11,6 +11,7 @@ const links = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/tests", label: "View Tests" },
+  { href: "/leaderboard", label: "Leaderboard" },
 ];
 
 export default function Header() {
@@ -27,7 +28,7 @@ export default function Header() {
         </Link>
         <AboutTooltipLink />
       </div>
-      <nav className="hidden justify-self-center gap-8 text-xs uppercase tracking-[0.15em] md:flex">
+      <nav className="hidden justify-self-center gap-6 text-xs uppercase tracking-[0.15em] md:flex">
         {links.map((link) => {
           const active =
             link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
