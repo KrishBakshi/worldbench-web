@@ -8,6 +8,7 @@ import CompareModels, { type CompareEntry } from "@/components/tests/CompareMode
 import XPostEmbed from "@/components/tests/XPostEmbed";
 import ProviderByline from "@/components/tests/ProviderByline";
 import ContributeCTA from "@/components/tests/ContributeCTA";
+import ScoreLadder from "@/components/tests/ScoreLadder";
 import SocialLinks from "@/components/about/SocialLinks";
 import BiomeGraph from "@/components/about/BiomeGraph";
 
@@ -27,10 +28,10 @@ export async function generateMetadata({
   const description = test.summary || `${test.model} generating a floating biome island.`;
 
   return {
-    title: `${test.title} — worldbench`,
+    title: `${test.title} · worldbench`,
     description,
     openGraph: {
-      title: `${test.title} — worldbench`,
+      title: `${test.title} · worldbench`,
       description,
     },
   };
@@ -124,6 +125,8 @@ export default async function TestDetailPage({
           </>
         )}
       </div>
+
+      {test.scores && <ScoreLadder scores={test.scores} graph={test.graph} />}
 
       {test.content && (
         <div className="prose mt-8 max-w-none text-sm">

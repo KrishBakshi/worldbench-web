@@ -1,5 +1,6 @@
 import { createElement } from "react";
 import type { Test } from "@/lib/tests";
+import { formatPct } from "@/lib/scores";
 import { getProvider } from "@/lib/providers";
 import {
   WORDMARK_SIZE,
@@ -55,6 +56,13 @@ export default function TestCard({
           {/* Entries with no provider (the hand-tuned reference) get no mark —
               falling back to the title's initial just renders a stray glyph. */}
         </div>
+
+        {test.scores && (
+          <span className="absolute top-3 right-3 font-display text-[10px] tabular-nums tracking-[0.12em] text-mist transition-colors duration-300 group-hover:text-void/70">
+            {formatPct(test.scores.pct)}
+            {test.scores.incomplete ? "*" : ""}
+          </span>
+        )}
 
         <span
           className={`relative text-center font-display leading-tight text-mist-bright transition-colors duration-300 group-hover:text-void ${
