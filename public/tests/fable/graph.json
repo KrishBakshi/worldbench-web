@@ -1,0 +1,151 @@
+{
+  "viewBox": {
+    "width": 800,
+    "height": 560
+  },
+  "score": 6,
+  "max_score": 10,
+  "passed": false,
+  "nodes": [
+    {
+      "id": "mountains",
+      "label": "Snow Mountains",
+      "passed": true,
+      "reason": "ok",
+      "cx": 340,
+      "cy": 52,
+      "w": 176,
+      "h": 46
+    },
+    {
+      "id": "forest",
+      "label": "Snowy Conifer Forest",
+      "passed": false,
+      "reason": "not at a higher elevation than highlands; not at a higher elevation than jungle",
+      "cx": 340,
+      "cy": 145,
+      "w": 190,
+      "h": 46
+    },
+    {
+      "id": "highlands",
+      "label": "Highlands",
+      "passed": false,
+      "reason": "not connected to jungle; not at a higher elevation than jungle",
+      "cx": 130,
+      "cy": 172,
+      "w": 168,
+      "h": 46
+    },
+    {
+      "id": "jungle",
+      "label": "Dense Jungle",
+      "passed": false,
+      "reason": "not connected to highlands; not connected to grassland",
+      "cx": 362,
+      "cy": 252,
+      "w": 168,
+      "h": 46
+    },
+    {
+      "id": "swamp",
+      "label": "Backwater Swamp",
+      "passed": true,
+      "reason": "ok",
+      "cx": 95,
+      "cy": 322,
+      "w": 168,
+      "h": 46
+    },
+    {
+      "id": "grove",
+      "label": "Flowering Grove",
+      "passed": true,
+      "reason": "ok",
+      "cx": 250,
+      "cy": 438,
+      "w": 168,
+      "h": 46
+    },
+    {
+      "id": "grassland",
+      "label": "Grassland Plateau",
+      "passed": false,
+      "reason": "not connected to jungle; not at a higher elevation than delta",
+      "cx": 372,
+      "cy": 372,
+      "w": 180,
+      "h": 46
+    },
+    {
+      "id": "delta",
+      "label": "Coastal Delta / Ocean",
+      "passed": true,
+      "reason": "ok",
+      "cx": 348,
+      "cy": 512,
+      "w": 200,
+      "h": 46
+    },
+    {
+      "id": "desert",
+      "label": "Desert Basin",
+      "passed": true,
+      "reason": "ok",
+      "cx": 652,
+      "cy": 330,
+      "w": 180,
+      "h": 46,
+      "isolated": true
+    },
+    {
+      "id": "volcano",
+      "label": "Volcano",
+      "passed": true,
+      "reason": "ok",
+      "cx": 662,
+      "cy": 128,
+      "w": 168,
+      "h": 46,
+      "isolated": true
+    }
+  ],
+  "edges": [
+    {
+      "from": "delta",
+      "to": "grassland"
+    },
+    {
+      "from": "delta",
+      "to": "mountains"
+    },
+    {
+      "from": "desert",
+      "to": "grove"
+    },
+    {
+      "from": "forest",
+      "to": "highlands"
+    },
+    {
+      "from": "forest",
+      "to": "jungle"
+    },
+    {
+      "from": "forest",
+      "to": "mountains"
+    },
+    {
+      "from": "grove",
+      "to": "highlands"
+    },
+    {
+      "from": "highlands",
+      "to": "mountains"
+    },
+    {
+      "from": "jungle",
+      "to": "swamp"
+    }
+  ]
+}

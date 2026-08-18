@@ -1,0 +1,451 @@
+{
+  "slug": "gpt-5-6-sol",
+  "total_score": 165.05,
+  "total_max_score": 268.0,
+  "pct": 0.6158582089552239,
+  "passed": false,
+  "incomplete": false,
+  "tests": [
+    {
+      "id": "WC000",
+      "dir_name": "WC000_voxel_world",
+      "title": "Voxel lattice",
+      "score": 22.0,
+      "max_score": 38.0,
+      "passed": false,
+      "scored": true,
+      "reason": "Scored 22/38; missing: stacked_columns, grid_aligned, unit_voxels, water_bed",
+      "lost": [
+        {
+          "id": "stacked_columns",
+          "label": "Y-loop of unit cubes for columns/cliffs, not one stretched prism per cell",
+          "why": "no_y_loop"
+        },
+        {
+          "id": "grid_aligned",
+          "label": "Cubes snap to the cell lattice, no fractional cells or dart-throw world coords",
+          "why": "off_grid"
+        },
+        {
+          "id": "unit_voxels",
+          "label": "One cell size for land/structure cubes, not scaled blobs or CELL x height x CELL columns",
+          "why": "stretched"
+        },
+        {
+          "id": "water_bed",
+          "label": "Still water sits on solid ground (sand, stone, dirt, bedrock), not only a tray in the void",
+          "why": "no_seafloor"
+        }
+      ]
+    },
+    {
+      "id": "WC001",
+      "dir_name": "WC001_trying_all_the_biomes",
+      "title": "Biome coverage",
+      "score": 10.0,
+      "max_score": 10.0,
+      "passed": true,
+      "scored": true,
+      "reason": "All biomes present",
+      "lost": []
+    },
+    {
+      "id": "WC002",
+      "dir_name": "WC002_biome_placement",
+      "title": "Placement graph",
+      "score": 3.0,
+      "max_score": 10.0,
+      "passed": false,
+      "scored": true,
+      "reason": "Missing 7/10 biomes: mountains, forest, highlands, jungle, swamp, desert, volcano",
+      "lost": [
+        {
+          "id": "mountains",
+          "label": "mountains: not at a higher elevation than highlands",
+          "why": "not_higher"
+        },
+        {
+          "id": "forest",
+          "label": "forest: not at a higher elevation than highlands",
+          "why": "not_higher"
+        },
+        {
+          "id": "highlands",
+          "label": "highlands: not connected to jungle",
+          "why": "not_connected"
+        },
+        {
+          "id": "jungle",
+          "label": "jungle: not connected to highlands",
+          "why": "not_connected"
+        },
+        {
+          "id": "swamp",
+          "label": "swamp: incorrectly connected to delta",
+          "why": "incorrectly_connected"
+        },
+        {
+          "id": "desert",
+          "label": "desert: incorrectly connected to mountains; incorrectly connected to highlands; incorrectly connected to delta",
+          "why": "incorrectly_connected"
+        },
+        {
+          "id": "volcano",
+          "label": "volcano: incorrectly connected to delta",
+          "why": "incorrectly_connected"
+        }
+      ]
+    },
+    {
+      "id": "WC003",
+      "dir_name": "WC003_biome_micro_contents",
+      "title": "Micro-contents",
+      "score": 74.05,
+      "max_score": 100.0,
+      "passed": false,
+      "scored": true,
+      "reason": "Scored 74.05/100; incomplete biomes: forest, highlands, jungle, swamp, grove, delta, desert",
+      "lost": [
+        {
+          "id": "forest_fauna_spawn",
+          "label": "forest: Placed animals in this biome (deer/fox/wolf/rabbit class), not a biome-id mention",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "forest_floor_cover",
+          "label": "forest: Under-canopy forest floor cover (ferns, berries, or low shrubs between the pines)",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "exposed_stone",
+          "label": "highlands: Exposed rock/stone on the highland surface or slopes",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "mist_particles",
+          "label": "highlands: Mist particles over highland coordinates (not a legend weather string)",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "highland_fauna_spawn",
+          "label": "highlands: Placed sparse highland animals (sheep/goat/llama/hare class)",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "hardy_tussock_plants",
+          "label": "highlands: Hardy tussock/low hardy plants on thin soil, distinct from a forest or a lush meadow",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "inland_ponds",
+          "label": "jungle: Inland ponds/pools in the jungle",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "canopy_fauna_spawn",
+          "label": "jungle: Placed canopy/tree life (bird/parrot class) in the jungle",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "lily_pads_or_surface_cover",
+          "label": "swamp: Lily pads or equivalent surface cover on swamp water",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "stagnant_channels",
+          "label": "swamp: Stagnant backwater channels (not a desert river)",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "pollinators",
+          "label": "grove: Placed pollinators (bee class) among the blossoms",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "coastal_fauna_spawn",
+          "label": "delta: Placed in-water coastal life (fish class)",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "shore_fauna_spawn",
+          "label": "delta: Placed shore life (bird/turtle class)",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "dead_bush",
+          "label": "desert: Dead bush / dry scrub cubes on the desert flats besides cactus",
+          "why": "not_in_scope_evidence"
+        }
+      ]
+    },
+    {
+      "id": "WC004",
+      "dir_name": "WC004_biome_rendering",
+      "title": "Physics",
+      "score": 53.0,
+      "max_score": 100.0,
+      "passed": false,
+      "scored": true,
+      "reason": "Scored 53.0/100; incomplete biomes: mountains, forest, highlands, jungle, swamp, grove, grassland, delta, desert, volcano",
+      "lost": [
+        {
+          "id": "snowline_gradient",
+          "label": "mountains: Visible snowline transition from rock to snow on slopes",
+          "why": "no_constructor"
+        },
+        {
+          "id": "packed_ice_or_powder",
+          "label": "mountains: Packed ice, ice patches, or powder-snow cubes on high peaks",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "meltwater_descent",
+          "label": "mountains: Meltwater stream descending from the massif",
+          "why": "no_motion"
+        },
+        {
+          "id": "understory_fern_clump",
+          "label": "forest: Ferns, berries, or low shrubs under the pine canopy",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "podzol_or_coarse_dirt",
+          "label": "forest: Podzol or coarse-dirt patches among snow under pines",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "exposed_granite_render",
+          "label": "highlands: Exposed grey granite/rock patches on highland surface",
+          "why": "no_constructor"
+        },
+        {
+          "id": "sparse_scrub_cube",
+          "label": "highlands: Sparse low scrub/shrub cubes, not a forest",
+          "why": "duplicate_evidence"
+        },
+        {
+          "id": "cool_grass_tint",
+          "label": "highlands: Cool muted highland grass tint, not jungle lime or desert tan",
+          "why": "duplicate_evidence"
+        },
+        {
+          "id": "highland_mist_hang",
+          "label": "highlands: Highland mist, large soft particles hanging near ground",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "headwater_rill_flow",
+          "label": "highlands: Headwater spring/rill flowing from highland",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "highland_fauna_idle",
+          "label": "highlands: Sparse highland grazers (sheep/goat/llama/hare) grounded on terrain",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "hanging_vines_on_trunks",
+          "label": "jungle: Vines hanging on trunks or canopy, jungle signature flora",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "cocoa_melon_or_bamboo",
+          "label": "jungle: Cocoa on trunks, melon patches, or bamboo shoots",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "waterfall_cascade",
+          "label": "jungle: Waterfall, vertical cascade of water voxels",
+          "why": "no_motion"
+        },
+        {
+          "id": "canopy_bird_motion",
+          "label": "jungle: Canopy birds with subtle hover or perch motion",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "hanging_moss_drape",
+          "label": "swamp: Hanging moss or vine drape from swamp trees",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "lily_pad_float",
+          "label": "swamp: Lily pads, flat green discs on swamp water",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "sugar_cane_shore",
+          "label": "swamp: Sugar cane or reed stalks on swamp shores",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "mud_bank_render",
+          "label": "swamp: Mud/silt banks at swamp water edges",
+          "why": "duplicate_evidence"
+        },
+        {
+          "id": "feeder_stream_flow",
+          "label": "grove: Small feeder stream/brook through the grove",
+          "why": "no_motion"
+        },
+        {
+          "id": "petal_drift_particles",
+          "label": "grove: Pink petal particles drifting/falling from canopy",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "soft_warm_mist",
+          "label": "grove: Soft warm mist over the flowering grove",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "grove_fauna_graze",
+          "label": "grove: Grove grazers (deer/sheep) idle on terrain",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "bee_pollinator_buzz",
+          "label": "grove: Pollinators (bee class) with small hover/buzz motion among blossoms",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "grass_over_dirt",
+          "label": "grassland: Grass surface over dirt, plains surface recipe, not sand or snow",
+          "why": "duplicate_evidence"
+        },
+        {
+          "id": "olive_grass_tint",
+          "label": "grassland: Temperate olive/green grass tint, not swamp grey-green or desert tan",
+          "why": "duplicate_evidence"
+        },
+        {
+          "id": "tributary_river_flow",
+          "label": "grassland: Winding tributary river through plateau with flowing water",
+          "why": "no_motion"
+        },
+        {
+          "id": "clear_river_tint",
+          "label": "grassland: Clear cyan plains-river water, not swamp olive or lava orange",
+          "why": "duplicate_evidence"
+        },
+        {
+          "id": "sand_seafloor_recipe",
+          "label": "delta: Sand (or gravel) seafloor under shallow water, not mud swamp bed",
+          "why": "duplicate_evidence"
+        },
+        {
+          "id": "kelp_or_seagrass",
+          "label": "delta: Kelp or seagrass on the coastal floor",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "river_mouth_braid",
+          "label": "delta: Braided river mouths merging into ocean",
+          "why": "no_motion"
+        },
+        {
+          "id": "cliff_waterfall_fall",
+          "label": "delta: Cliff waterfall, water falling off edge into void/ocean",
+          "why": "no_motion"
+        },
+        {
+          "id": "coastal_fauna_motion",
+          "label": "delta: Coastal life, fish swimming in water or birds/turtles on shore",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "sand_over_sandstone",
+          "label": "desert: Sand surface over sandstone substrate, not grass over dirt",
+          "why": "duplicate_evidence"
+        },
+        {
+          "id": "dead_bush_twig",
+          "label": "desert: Dead bush / dry scrub twig clumps on flats",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "sand_ground_tint",
+          "label": "desert: Arid sand/olive-tan ground tint, not lush green grass colormap",
+          "why": "duplicate_evidence"
+        },
+        {
+          "id": "dry_grass_clump",
+          "label": "desert: Sparse dry/yellow grass tufts besides cactus and dead bush",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "lava_flow_stream",
+          "label": "volcano: Orange molten lava channel flowing on volcanic ground",
+          "why": "duplicate_evidence"
+        },
+        {
+          "id": "lava_pool_glow",
+          "label": "volcano: Glowing lava pool in crater or flank",
+          "why": "no_time_update"
+        },
+        {
+          "id": "lava_orange_tint",
+          "label": "volcano: Orange/red lava tint, not cyan river or swamp olive",
+          "why": "duplicate_evidence"
+        },
+        {
+          "id": "eruption_burst",
+          "label": "volcano: Periodic eruption, bombs/sparks with ballistic motion",
+          "why": "duplicate_evidence"
+        },
+        {
+          "id": "volcanic_dust_fog",
+          "label": "volcano: Grey volcanic dust/fog atmosphere around the cone",
+          "why": "duplicate_evidence"
+        }
+      ]
+    },
+    {
+      "id": "WC005",
+      "dir_name": "WC005_day_night_seasons",
+      "title": "Temporal cycles",
+      "score": 3.0,
+      "max_score": 10.0,
+      "passed": false,
+      "scored": true,
+      "reason": "Scored 3.0/10; failed items: night_dimming, dusk_dawn_tint, season_cycle, season_world_tint, season_modulates_weather, sky_or_fog_day_cycle, moon",
+      "lost": [
+        {
+          "id": "night_dimming",
+          "label": "Night darkens the world, ambient/dir lights drop when the sun is down",
+          "why": "no_constructor"
+        },
+        {
+          "id": "dusk_dawn_tint",
+          "label": "Dusk/dawn color shift on sun or light (warm evening, cool night)",
+          "why": "spawn_only_no_update"
+        },
+        {
+          "id": "season_cycle",
+          "label": "Four-season (or year) loop advancing on a clock",
+          "why": "hud_only"
+        },
+        {
+          "id": "season_world_tint",
+          "label": "Season changes world lighting or terrain tint, not HUD text alone",
+          "why": "no_time_update"
+        },
+        {
+          "id": "season_modulates_weather",
+          "label": "Season scales weather intensity (rain/snow/sand/ash multipliers)",
+          "why": "not_in_scope_evidence"
+        },
+        {
+          "id": "sky_or_fog_day_cycle",
+          "label": "Sky, fog, or background color follows the day clock",
+          "why": "no_motion"
+        },
+        {
+          "id": "moon",
+          "label": "Moon disc in the sky, reasoned extra, not named in the generation prompt",
+          "why": "not_in_scope_evidence"
+        }
+      ]
+    }
+  ]
+}
