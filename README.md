@@ -8,7 +8,8 @@ A single prompt for generating a self-contained Three.js `world.html` of a
 floating biome island, plus a small site for browsing and interacting with
 what different models produce from it.
 
-There is no scoring, no schema, no CLI, just the prompt and your own eyes.
+An automated ladder scores structure and ecology. You still look at what
+each model built; a score cannot see whether the place feels right.
 
 The model only ever sees the natural-language prompt. It is never shown
 [`outputs/create.html`](outputs/create.html). That file is a hand-tuned
@@ -24,7 +25,7 @@ npm install
 npm run dev
 ```
 
-Three pages:
+Four pages:
 - **Home**: a minimal floating-island animation, then "See Recent Tests"
   (up to 4 pinned tests).
 - **About**: what worldbench is, the reasoning it tests, the biome legend
@@ -34,7 +35,10 @@ Three pages:
   page with an intro clip, the test date, and the live, interactive
   `world.html` embedded below it. Under that world, **Compare models**
   opens a grid that puts it side by side with the worlds from up to five
-  other tests, added one panel at a time.
+  other tests, added one panel at a time. If the test has a ladder export,
+  a score ladder sits under the world.
+- **Leaderboard**: ranked ladder scores for each model, with a chart and a
+  per-test breakdown from voxel lattice through temporal cycles.
 
 ## Adding a test
 
@@ -49,6 +53,7 @@ Drop a new folder in `public/tests/<slug>/` with:
   Comparing islands side by side means comparing islands, not four
   different HUDs at once.
 - optionally `intro.mp4` / `intro.webm` / `intro.gif`
+- optionally `scores.json` and `graph.json` from a ladder export
 
 No code changes needed, the site reads `public/tests/` at build time.
 
