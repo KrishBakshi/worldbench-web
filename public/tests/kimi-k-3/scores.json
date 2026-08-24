@@ -117,11 +117,6 @@
           "why": "no_constructor"
         },
         {
-          "id": "depth_banded_water",
-          "label": "delta: Shallow turquoise vs deeper offshore water bands",
-          "why": "unbounded_water"
-        },
-        {
           "id": "coral_or_reef_life",
           "label": "delta: Coral / reef structures in shallow coastal water",
           "why": "no_constructor"
@@ -257,11 +252,6 @@
           "id": "tributary_river_flow",
           "label": "grassland: Winding tributary river through plateau with flowing water",
           "why": "no_motion"
-        },
-        {
-          "id": "deep_offshore_blue",
-          "label": "delta: Deeper blue/offshore water band",
-          "why": "unbounded_water"
         },
         {
           "id": "kelp_or_seagrass",
