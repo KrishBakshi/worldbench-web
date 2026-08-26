@@ -7,6 +7,7 @@ import QwenIcon from "./qwen";
 import KimiIcon from "./kimi";
 import ZaiIcon from "./zai";
 import DeepSeekIcon from "./deepseek";
+import StealthIcon from "./stealth";
 import AnthropicTextIcon from "./anthropic-text";
 import OpenAITextIcon from "./openai-text";
 import GoogleTextIcon from "./google-text";
@@ -39,6 +40,7 @@ export const PROVIDER_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement
   moonshot: KimiIcon,
   zai: ZaiIcon,
   deepseek: DeepSeekIcon,
+  stealth: StealthIcon,
 };
 
 export function getProviderIcon(

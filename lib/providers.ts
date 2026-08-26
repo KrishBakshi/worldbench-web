@@ -18,6 +18,7 @@ export const PROVIDERS: Record<string, Provider> = {
   moonshot: { name: "Moonshot AI" },
   zai: { name: "Z.ai" },
   deepseek: { name: "DeepSeek" },
+  stealth: { name: "Stealth" },
 };
 
 export function getProvider(slug: string | null): Provider | null {
