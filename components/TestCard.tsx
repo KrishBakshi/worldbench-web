@@ -7,7 +7,7 @@ import {
   getProviderWordmark,
   wordmarkSize,
 } from "@/components/icons";
-import LiquidCard from "@/components/LiquidCard";
+import FastCard from "@/components/FastCard";
 
 export default function TestCard({
   test,
@@ -25,7 +25,7 @@ export default function TestCard({
   const wordmark = getProviderWordmark(test.provider);
 
   return (
-    <LiquidCard href={`/tests/${test.slug}`}>
+    <FastCard href={`/tests/${test.slug}`}>
       <div
         className={`relative flex w-full flex-col items-center justify-center overflow-hidden px-4 ${
           compact ? "aspect-[4/3]" : "aspect-video"
@@ -44,11 +44,11 @@ export default function TestCard({
               // black) so the mark stays visible in both states. Scale and
               // opacity motion are unchanged.
               className:
-                "h-[56%] w-[56%] scale-[0.99] text-white opacity-[0.07] transition-[opacity,transform,color] duration-500 ease-out group-hover:scale-[1.01] group-hover:text-black group-hover:opacity-[0.28] [[data-theme=day]_&]:text-black [[data-theme=day]_&]:group-hover:text-white",
+                "h-[56%] w-[56%] scale-[0.99] text-white opacity-[0.07] transition-[opacity,transform,color] duration-200 ease-out group-hover:scale-[1.01] group-hover:text-black group-hover:opacity-[0.28] [[data-theme=day]_&]:text-black [[data-theme=day]_&]:group-hover:text-white",
             })
           ) : provider ? (
             // A known provider with no vendored mark yet: its initial stands in.
-            <span className="font-display scale-[0.99] text-[5.5rem] leading-none font-bold text-white opacity-[0.06] transition-[opacity,transform,color] duration-500 ease-out select-none group-hover:scale-[1.01] group-hover:text-black group-hover:opacity-[0.26] [[data-theme=day]_&]:text-black [[data-theme=day]_&]:group-hover:text-white">
+            <span className="font-display scale-[0.99] text-[5.5rem] leading-none font-bold text-white opacity-[0.06] transition-[opacity,transform,color] duration-200 ease-out select-none group-hover:scale-[1.01] group-hover:text-black group-hover:opacity-[0.26] [[data-theme=day]_&]:text-black [[data-theme=day]_&]:group-hover:text-white">
               {provider.name.charAt(0)}
             </span>
           ) : null}
@@ -57,14 +57,14 @@ export default function TestCard({
         </div>
 
         <span
-          className={`relative text-center font-display leading-tight text-mist-bright transition-colors duration-300 group-hover:text-void ${
+          className={`relative text-center font-display leading-tight text-mist-bright transition-colors duration-200 group-hover:text-void ${
             compact ? "text-sm" : "text-base"
           }`}
         >
           {test.title}
         </span>
 
-        <span className="relative mt-2 flex items-center text-[10px] uppercase tracking-[0.18em] text-mist transition-colors duration-300 group-hover:text-void/70">
+        <span className="relative mt-2 flex items-center text-[10px] uppercase tracking-[0.18em] text-mist transition-colors duration-200 group-hover:text-void/70">
           {provider && wordmark ? (
             createElement(wordmark, {
               size: wordmarkSize(
@@ -79,6 +79,6 @@ export default function TestCard({
           )}
         </span>
       </div>
-    </LiquidCard>
+    </FastCard>
   );
 }
