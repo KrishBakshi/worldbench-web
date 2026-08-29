@@ -1,6 +1,6 @@
 import GitHubIcon from "@/components/icons/github";
 
-const REPO_URL = "https://github.com/KrishBakshi/worldbench";
+const REPO_URL = "https://github.com/KrishBakshi/worldbench-web";
 
 /**
  * Header link to the project repository. Sits next to the theme toggle and
