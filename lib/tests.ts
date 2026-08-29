@@ -22,6 +22,12 @@ export interface Test {
   xPostUrl: string | null;
   /** One or two sentences, shown under the title and used as the meta description. */
   summary: string;
+  /**
+   * A short caveat about the entry itself — e.g. an unverified/anonymous
+   * provider — rendered as a standalone badge on the detail page rather than
+   * folded into `summary`'s prose. Optional; most tests won't have one.
+   */
+  notice: string | null;
   worldHtmlSrc: string;
   /**
    * The legend-free build of the same world, used by the comparison grid. Falls
@@ -62,6 +68,7 @@ function loadTest(slug: string): Test | null {
     introMedia,
     xPostUrl: typeof data.xPost === "string" ? data.xPost : null,
     summary: typeof data.summary === "string" ? data.summary : "",
+    notice: typeof data.notice === "string" ? data.notice : null,
     worldHtmlSrc: `/tests/${slug}/world.html`,
     worldPreviewSrc: fs.existsSync(path.join(dir, "world-preview.html"))
       ? `/tests/${slug}/world-preview.html`

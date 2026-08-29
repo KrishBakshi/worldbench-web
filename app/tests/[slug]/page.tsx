@@ -8,6 +8,7 @@ import CompareModels, { type CompareEntry } from "@/components/tests/CompareMode
 import XPostEmbed from "@/components/tests/XPostEmbed";
 import ProviderByline from "@/components/tests/ProviderByline";
 import ContributeCTA from "@/components/tests/ContributeCTA";
+import TestNotice from "@/components/tests/TestNotice";
 import SocialLinks from "@/components/about/SocialLinks";
 import BiomeGraph from "@/components/about/BiomeGraph";
 
@@ -87,7 +88,10 @@ export default async function TestDetailPage({
       </div>
       <ProviderByline provider={test.provider} />
 
-      {test.summary && <p className="mt-4 text-sm text-mist">{test.summary}</p>}
+      {test.summary && !test.notice && (
+        <p className="mt-4 text-sm text-mist">{test.summary}</p>
+      )}
+      {test.notice && <TestNotice>{test.notice}</TestNotice>}
 
       {test.introMedia && (
         <div className="mt-8 aspect-video w-full overflow-hidden rounded-lg border border-line">
