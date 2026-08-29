@@ -43,6 +43,15 @@ body {
   color: var(--color-void);
 }
 
+/* TestNotice renders bg-mist-bright/text-void — identical to the global
+   selection colours above — so a selection inside it would otherwise paint
+   invisibly. Invert locally against the card instead. */
+.notice-card ::selection,
+.notice-card::selection {
+  background-color: var(--color-void);
+  color: var(--color-mist-bright);
+}
+
 /* Keep native UI (scrollbars, form controls, overlay scrollbar flash) on the
    active theme rather than the OS default. */
 :root {
