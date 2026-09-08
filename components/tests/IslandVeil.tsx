@@ -58,8 +58,10 @@ export function useIslandReady(
     }
 
     function stillBooting() {
+      const node = iframeRef.current;
+      if (!node) return true;
       try {
-        const doc = iframe.contentDocument;
+        const doc = node.contentDocument;
         if (!doc?.querySelector("canvas")) return true;
         // Worlds often draw their own splash (#loading / #load) over an empty
         // canvas; wait until that overlay has gone so we fade onto the island,
