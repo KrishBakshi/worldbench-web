@@ -7,6 +7,7 @@ import QwenIcon from "./qwen";
 import KimiIcon from "./kimi";
 import ZaiIcon from "./zai";
 import DeepSeekIcon from "./deepseek";
+import MetaIcon from "./meta";
 import StealthIcon from "./stealth";
 import AnthropicTextIcon from "./anthropic-text";
 import OpenAITextIcon from "./openai-text";
@@ -16,6 +17,7 @@ import AlibabaTextIcon from "./alibaba-text";
 import MoonshotTextIcon from "./moonshot-text";
 import ZaiTextIcon from "./zai-text";
 import DeepSeekTextIcon from "./deepseek-text";
+import MetaTextIcon from "./meta-text";
 import type { WordmarkProps } from "./wordmark";
 
 export type { WordmarkProps };
@@ -24,12 +26,13 @@ export type { WordmarkProps };
  * Provider slug (from a test's `provider` frontmatter) to the mark drawn as the
  * card watermark. The mark is the *model's* logo, while the label under the
  * model name is the company — Claude for Anthropic, Gemini for Google, Qwen for
- * Alibaba, Kimi for Moonshot AI.
+ * Alibaba, Kimi for Moonshot AI. Meta's infinity mark stands in for Muse
+ * Spark (no separate model logo in the set).
  *
  * Artwork is vendored from @lobehub/icons-static-svg (MIT) rather than taken as
  * a dependency: the React package `@lobehub/icons` peer-depends on antd and
- * @lobehub/ui, which would pull a whole UI framework into this site for seven
- * logos.
+ * @lobehub/ui, which would pull a whole UI framework into this site for a
+ * handful of logos.
  */
 export const PROVIDER_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
   anthropic: ClaudeIcon,
@@ -40,6 +43,7 @@ export const PROVIDER_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement
   moonshot: KimiIcon,
   zai: ZaiIcon,
   deepseek: DeepSeekIcon,
+  meta: MetaIcon,
   stealth: StealthIcon,
 };
 
@@ -67,6 +71,7 @@ export const PROVIDER_WORDMARKS: Record<string, ComponentType<WordmarkProps>> = 
   moonshot: MoonshotTextIcon,
   zai: ZaiTextIcon,
   deepseek: DeepSeekTextIcon,
+  meta: MetaTextIcon,
 };
 
 /**
@@ -104,6 +109,7 @@ const WORDMARK_SCALE: Record<string, number> = {
   xai: 1.25,
   openai: 1.2,
   zai: 1.1,
+  meta: 1.2,
 };
 
 export function wordmarkSize(slug: string | null, base: number): number {

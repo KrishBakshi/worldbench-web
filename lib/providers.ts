@@ -18,6 +18,7 @@ export const PROVIDERS: Record<string, Provider> = {
   moonshot: { name: "Moonshot AI" },
   zai: { name: "Z.ai" },
   deepseek: { name: "DeepSeek" },
+  meta: { name: "Meta" },
   stealth: { name: "Stealth" },
 };
 
