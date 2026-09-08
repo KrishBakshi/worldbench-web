@@ -9,6 +9,7 @@ import {
   getProviderWordmark,
   wordmarkSize,
 } from "@/components/icons";
+import MissingWorldBanner from "@/components/tests/MissingWorldBanner";
 
 /**
  * A test reduced to what the comparison grid needs: enough to label a panel and
@@ -20,8 +21,8 @@ export interface CompareEntry {
   title: string;
   model: string;
   provider: string | null;
-  /** The legend-free build — see "Preview builds" in CLAUDE.md. */
-  worldPreviewSrc: string;
+  /** The legend-free build — see "Preview builds" in CLAUDE.md. Null if missing. */
+  worldPreviewSrc: string | null;
 }
 
 /**
@@ -151,13 +152,19 @@ function ComparePanel({
           </button>
         )}
       </div>
-      <iframe
-        src={entry.worldPreviewSrc}
-        title={`${entry.title} world`}
-        className="min-h-0 w-full flex-1"
-        loading="lazy"
-        sandbox="allow-scripts allow-same-origin"
-      />
+      {entry.worldPreviewSrc ? (
+        <iframe
+          src={entry.worldPreviewSrc}
+          title={`${entry.title} world`}
+          className="min-h-0 w-full flex-1"
+          loading="lazy"
+          sandbox="allow-scripts allow-same-origin"
+        />
+      ) : (
+        <div className="min-h-0 w-full flex-1">
+          <MissingWorldBanner />
+        </div>
+      )}
     </div>
   );
 }

@@ -28,14 +28,15 @@ export interface Test {
    * folded into `summary`'s prose. Optional; most tests won't have one.
    */
   notice: string | null;
-  worldHtmlSrc: string;
+  /** Null when the folder has no world.html yet. */
+  worldHtmlSrc: string | null;
   /**
    * The legend-free build of the same world, used by the detail-page embed and
    * the comparison grid. Falls back to world.html for a test that hasn't got
    * one, so a missing preview shows the world with its overlays rather than an
-   * empty panel.
+   * empty panel. Null when neither file exists.
    */
-  worldPreviewSrc: string;
+  worldPreviewSrc: string | null;
   content: string;
 }
 
@@ -59,6 +60,9 @@ function loadTest(slug: string): Test | null {
     }
   }
 
+  const hasWorld = fs.existsSync(path.join(dir, "world.html"));
+  const hasPreview = fs.existsSync(path.join(dir, "world-preview.html"));
+
   return {
     slug,
     title: data.title ?? slug,
@@ -70,10 +74,12 @@ function loadTest(slug: string): Test | null {
     xPostUrl: typeof data.xPost === "string" ? data.xPost : null,
     summary: typeof data.summary === "string" ? data.summary : "",
     notice: typeof data.notice === "string" ? data.notice : null,
-    worldHtmlSrc: `/tests/${slug}/world.html`,
-    worldPreviewSrc: fs.existsSync(path.join(dir, "world-preview.html"))
+    worldHtmlSrc: hasWorld ? `/tests/${slug}/world.html` : null,
+    worldPreviewSrc: hasPreview
       ? `/tests/${slug}/world-preview.html`
-      : `/tests/${slug}/world.html`,
+      : hasWorld
+        ? `/tests/${slug}/world.html`
+        : null,
     content: content.trim(),
   };
 }

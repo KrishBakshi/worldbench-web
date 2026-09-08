@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import MissingWorldBanner from "@/components/tests/MissingWorldBanner";
 
 function ExpandIcon() {
   return (
@@ -168,17 +169,17 @@ export default function WorldEmbed({
   src,
   dedicatedSrc,
 }: {
-  /** Legend-free preview, shown in the on-page frame. */
-  src: string;
+  /** Legend-free preview, shown in the on-page frame. Null if the file is missing. */
+  src: string | null;
   /** Untouched world.html, opened by "Open in dedicated window". */
-  dedicatedSrc: string;
+  dedicatedSrc: string | null;
 }) {
   const [expanded, setExpanded] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const isPreview = src !== dedicatedSrc;
+  const isPreview = Boolean(src && dedicatedSrc && src !== dedicatedSrc);
 
   useEffect(() => {
-    if (!expanded) return;
+    if (!expanded || !src) return;
 
     document.body.style.overflow = "hidden";
 
@@ -218,7 +219,17 @@ export default function WorldEmbed({
         // frame already gone; nothing to detach
       }
     };
-  }, [expanded]);
+  }, [expanded, src]);
+
+  if (!src) {
+    return (
+      <div className="mx-auto w-full max-w-3xl">
+        <div className="relative aspect-video overflow-hidden rounded-lg border border-line">
+          <MissingWorldBanner />
+        </div>
+      </div>
+    );
+  }
 
   const iframe = (
     <iframe
@@ -254,7 +265,7 @@ export default function WorldEmbed({
         >
           {iframe}
           <div className="flex shrink-0 items-center justify-end border-t border-line px-4 py-2.5">
-            <DedicatedLink href={dedicatedSrc} />
+            {dedicatedSrc && <DedicatedLink href={dedicatedSrc} />}
           </div>
           {enlargeButton}
         </div>
@@ -268,13 +279,13 @@ export default function WorldEmbed({
         <div className="relative flex h-full w-full flex-col">{iframe}</div>
         {enlargeButton}
       </div>
-      {isPreview ? (
+      {isPreview && dedicatedSrc ? (
         <PreviewNote dedicatedSrc={dedicatedSrc} />
-      ) : (
+      ) : dedicatedSrc ? (
         <div className="mt-2 flex justify-end">
           <DedicatedLink href={dedicatedSrc} />
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
