@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -17,36 +15,18 @@ import { cn } from "@/lib/utils";
  * fill + light text in day mode), so the hover state matches
  * LiquidCard's fill without any `[data-theme=day]` overrides here.
  */
-function prefetchDocument(href: string) {
-  if (document.querySelector(`link[rel="prefetch"][href="${href}"]`)) return;
-  const link = document.createElement("link");
-  link.rel = "prefetch";
-  link.as = "document";
-  link.href = href;
-  document.head.appendChild(link);
-}
-
 export default function FastCard({
   href,
-  documentHref,
   children,
   className,
 }: {
   href: string;
-  /** World HTML to start fetching on hover, so the slug-page iframe is warm. */
-  documentHref?: string | null;
   children: ReactNode;
   className?: string;
 }) {
-  const warm = () => {
-    if (documentHref) prefetchDocument(documentHref);
-  };
-
   return (
     <Link
       href={href}
-      onPointerEnter={warm}
-      onFocus={warm}
       className={cn(
         "group relative block overflow-hidden rounded-lg border border-line",
         "bg-[color-mix(in_srgb,var(--color-void-deep)_60%,transparent)]",
