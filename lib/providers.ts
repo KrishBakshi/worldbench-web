@@ -19,6 +19,7 @@ export const PROVIDERS: Record<string, Provider> = {
   zai: { name: "Z.ai" },
   deepseek: { name: "DeepSeek" },
   meta: { name: "Meta" },
+  nvidia: { name: "NVIDIA" },
   /** Catch-all for anonymous or unbranded listings — not a company name. */
   other: { name: "Other" },
 };

@@ -8,6 +8,7 @@ import KimiIcon from "./kimi";
 import ZaiIcon from "./zai";
 import DeepSeekIcon from "./deepseek";
 import MetaIcon from "./meta";
+import NvidiaIcon from "./nvidia";
 import OtherIcon from "./other";
 import AnthropicTextIcon from "./anthropic-text";
 import OpenAITextIcon from "./openai-text";
@@ -18,6 +19,7 @@ import MoonshotTextIcon from "./moonshot-text";
 import ZaiTextIcon from "./zai-text";
 import DeepSeekTextIcon from "./deepseek-text";
 import MetaTextIcon from "./meta-text";
+import NvidiaTextIcon from "./nvidia-text";
 import type { WordmarkProps } from "./wordmark";
 
 export type { WordmarkProps };
@@ -27,8 +29,8 @@ export type { WordmarkProps };
  * card watermark. The mark is the *model's* logo, while the label under the
  * model name is the company — Claude for Anthropic, Gemini for Google, Qwen for
  * Alibaba, Kimi for Moonshot AI. Meta's infinity mark stands in for Muse
- * Spark (no separate model logo in the set). `other` is the catch-all for
- * unbranded listings, not a lab.
+ * Spark (no separate model logo in the set); NVIDIA's eye stands in for
+ * Nemotron. `other` is the catch-all for unbranded listings, not a lab.
  *
  * Artwork is vendored from @lobehub/icons-static-svg (MIT) rather than taken as
  * a dependency: the React package `@lobehub/icons` peer-depends on antd and
@@ -45,6 +47,7 @@ export const PROVIDER_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement
   zai: ZaiIcon,
   deepseek: DeepSeekIcon,
   meta: MetaIcon,
+  nvidia: NvidiaIcon,
   other: OtherIcon,
 };
 
@@ -73,6 +76,7 @@ export const PROVIDER_WORDMARKS: Record<string, ComponentType<WordmarkProps>> = 
   zai: ZaiTextIcon,
   deepseek: DeepSeekTextIcon,
   meta: MetaTextIcon,
+  nvidia: NvidiaTextIcon,
 };
 
 /**
@@ -111,6 +115,7 @@ const WORDMARK_SCALE: Record<string, number> = {
   openai: 1.2,
   zai: 1.1,
   meta: 1.2,
+  nvidia: 1.15,
 };
 
 export function wordmarkSize(slug: string | null, base: number): number {
