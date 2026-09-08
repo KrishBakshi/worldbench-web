@@ -236,11 +236,8 @@ export default function WorldEmbed({
       ref={iframeRef}
       src={src}
       title={isPreview ? "Island preview" : "Island"}
-      className="absolute inset-0 h-full w-full border-0"
-      // The slug-page island is the reason you're here — don't wait until it
-      // is near the viewport, and tell the browser it outranks the rest of
-      // the page. Compare-grid frames stay lazy.
-      fetchPriority="high"
+      className="w-full flex-1"
+      loading="lazy"
       sandbox="allow-scripts allow-same-origin"
     />
   );
@@ -250,63 +247,45 @@ export default function WorldEmbed({
       type="button"
       onClick={() => setExpanded((v) => !v)}
       aria-label={expanded ? "Close" : "Enlarge"}
-      className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-void-deep/80 text-mist backdrop-blur transition-colors hover:text-mist-bright"
+      className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-void-deep/80 text-mist backdrop-blur transition-colors hover:text-mist-bright"
     >
       {expanded ? <CloseIcon /> : <ExpandIcon />}
     </button>
   );
 
-  // One iframe in one place: swapping between the inline frame and the
-  // enlarge modal used to remount it, which re-downloaded Three.js and
-  // rebuilt the scene. The node stays mounted; only its chrome moves.
-  return (
-    <>
-      {expanded && (
-        <div
-          onClick={() => setExpanded(false)}
-          className="animate-backdrop-fade fixed inset-0 z-50 bg-void/20 backdrop-blur-sm"
-        />
-      )}
+  if (expanded) {
+    return (
       <div
-        className={
-          expanded
-            ? "pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8"
-            : "mx-auto w-full max-w-3xl"
-        }
+        onClick={() => setExpanded(false)}
+        className="animate-backdrop-fade fixed inset-0 z-50 flex items-center justify-center bg-void/20 p-4 backdrop-blur-sm sm:p-8"
       >
         <div
-          onClick={expanded ? (e) => e.stopPropagation() : undefined}
-          className={
-            expanded
-              ? "animate-modal-pop pointer-events-auto relative flex h-[70vh] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-line bg-void shadow-2xl sm:w-[70vw]"
-              : "relative aspect-video overflow-hidden rounded-lg border border-line"
-          }
+          onClick={(e) => e.stopPropagation()}
+          className="animate-modal-pop relative flex h-[70vh] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-line bg-void shadow-2xl sm:w-[70vw]"
         >
-          <div
-            className={
-              expanded
-                ? "relative min-h-0 w-full flex-1"
-                : "relative h-full w-full"
-            }
-          >
-            {iframe}
+          {iframe}
+          <div className="flex shrink-0 items-center justify-end border-t border-line px-4 py-2.5">
+            {dedicatedSrc && <DedicatedLink href={dedicatedSrc} />}
           </div>
-          {expanded && dedicatedSrc && (
-            <div className="flex shrink-0 items-center justify-end border-t border-line px-4 py-2.5">
-              <DedicatedLink href={dedicatedSrc} />
-            </div>
-          )}
           {enlargeButton}
         </div>
-        {!expanded &&
-          (isPreview && dedicatedSrc ? (
-            <PreviewNote dedicatedSrc={dedicatedSrc} />
-          ) : dedicatedSrc ? (
-            <div className="mt-2 flex justify-end">
-              <DedicatedLink href={dedicatedSrc} />
-            </div>
-          ) : null)}
       </div>
-    </>
+    );
+  }
+
+  return (
+    <div className="mx-auto w-full max-w-3xl">
+      <div className="relative aspect-video overflow-hidden rounded-lg border border-line">
+        <div className="relative flex h-full w-full flex-col">{iframe}</div>
+        {enlargeButton}
+      </div>
+      {isPreview && dedicatedSrc ? (
+        <PreviewNote dedicatedSrc={dedicatedSrc} />
+      ) : dedicatedSrc ? (
+        <div className="mt-2 flex justify-end">
+          <DedicatedLink href={dedicatedSrc} />
+        </div>
+      ) : null}
+    </div>
   );
 }
