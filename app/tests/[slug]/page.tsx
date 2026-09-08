@@ -112,7 +112,7 @@ export default async function TestDetailPage({
       )}
 
       <div className="mt-8">
-        <WorldEmbed src={test.worldHtmlSrc} />
+        <WorldEmbed src={test.worldPreviewSrc} dedicatedSrc={test.worldHtmlSrc} />
       </div>
 
       {/* The row under the world: the comparison opener first, then the link out

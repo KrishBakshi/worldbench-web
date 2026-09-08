@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 function ExpandIcon() {
   return (
@@ -60,9 +60,122 @@ function ExternalLinkIcon() {
   );
 }
 
-export default function WorldEmbed({ src }: { src: string }) {
+function InfoIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="size-3.5"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 16v-4" />
+      <path d="M12 8h.01" />
+    </svg>
+  );
+}
+
+function DedicatedLink({ href }: { href: string }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-mist transition-colors hover:text-mist-bright"
+    >
+      Open in dedicated window
+      <ExternalLinkIcon />
+    </a>
+  );
+}
+
+/**
+ * The line under the on-page island: this frame is the HUD-free preview, and
+ * the original generation lives behind "Open in dedicated window". The (i)
+ * discloses the why — same info-mark as the header wordmark, click rather than
+ * hover so the copy can wrap.
+ */
+function PreviewNote({ dedicatedSrc }: { dedicatedSrc: string }) {
+  const [open, setOpen] = useState(false);
+  const noteId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    function onPointerDown(e: PointerEvent) {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, [open]);
+
+  return (
+    <div ref={rootRef} className="mt-2">
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={noteId}
+          aria-label="About this preview"
+          onClick={() => setOpen((v) => !v)}
+          className="flex size-5 shrink-0 items-center justify-center rounded-full text-mist transition-colors hover:text-mist-bright focus-visible:text-mist-bright focus-visible:outline-none"
+        >
+          <InfoIcon />
+        </button>
+        <span className="text-[10px] uppercase tracking-[0.15em] text-mist">
+          Preview
+        </span>
+        <span className="ml-auto">
+          <DedicatedLink href={dedicatedSrc} />
+        </span>
+      </div>
+      {open && (
+        <p
+          id={noteId}
+          className="mt-2 max-w-xl text-xs leading-relaxed text-mist"
+        >
+          This is a preview of the original generation. Legends and HUD chrome
+          are hidden so you can see the island. Open the original in a{" "}
+          <a
+            href={dedicatedSrc}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-mist-bright underline underline-offset-2 hover:text-mist"
+          >
+            dedicated window
+          </a>
+          .
+        </p>
+      )}
+    </div>
+  );
+}
+
+export default function WorldEmbed({
+  src,
+  dedicatedSrc,
+}: {
+  /** Legend-free preview, shown in the on-page frame. */
+  src: string;
+  /** Untouched world.html, opened by "Open in dedicated window". */
+  dedicatedSrc: string;
+}) {
   const [expanded, setExpanded] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const isPreview = src !== dedicatedSrc;
 
   useEffect(() => {
     if (!expanded) return;
@@ -107,57 +220,61 @@ export default function WorldEmbed({ src }: { src: string }) {
     };
   }, [expanded]);
 
-  return (
-    <div
-      // Expanded: a dimmed backdrop that closes on click. Collapsed: the inline
-      // frame. The dialog inside stops the click from bubbling to the backdrop.
-      onClick={expanded ? () => setExpanded(false) : undefined}
-      className={
-        expanded
-          ? "animate-backdrop-fade fixed inset-0 z-50 flex items-center justify-center bg-void/20 p-4 backdrop-blur-sm sm:p-8"
-          : "relative mx-auto aspect-video w-full max-w-3xl overflow-hidden rounded-lg border border-line"
-      }
+  const iframe = (
+    <iframe
+      ref={iframeRef}
+      src={src}
+      title={isPreview ? "Island preview" : "Island"}
+      className="w-full flex-1"
+      loading="lazy"
+      sandbox="allow-scripts allow-same-origin"
+    />
+  );
+
+  const enlargeButton = (
+    <button
+      type="button"
+      onClick={() => setExpanded((v) => !v)}
+      aria-label={expanded ? "Close" : "Enlarge"}
+      className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-void-deep/80 text-mist backdrop-blur transition-colors hover:text-mist-bright"
     >
+      {expanded ? <CloseIcon /> : <ExpandIcon />}
+    </button>
+  );
+
+  if (expanded) {
+    return (
       <div
-        onClick={expanded ? (e) => e.stopPropagation() : undefined}
-        className={
-          expanded
-            ? "animate-modal-pop relative flex h-[70vh] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-line bg-void shadow-2xl sm:w-[70vw]"
-            : "relative flex h-full w-full flex-col"
-        }
+        onClick={() => setExpanded(false)}
+        className="animate-backdrop-fade fixed inset-0 z-50 flex items-center justify-center bg-void/20 p-4 backdrop-blur-sm sm:p-8"
       >
-        <iframe
-          ref={iframeRef}
-          src={src}
-          title="world.html"
-          className="w-full flex-1"
-          loading="lazy"
-          sandbox="allow-scripts allow-same-origin"
-        />
-
-        {expanded && (
-          <div className="flex shrink-0 items-center justify-end border-t border-line px-4 py-2.5">
-            <a
-              href={src}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-mist transition-colors hover:text-mist-bright"
-            >
-              Open in dedicated window
-              <ExternalLinkIcon />
-            </a>
-          </div>
-        )}
-
-        <button
-          type="button"
-          onClick={() => setExpanded((v) => !v)}
-          aria-label={expanded ? "Close" : "Enlarge"}
-          className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-void-deep/80 text-mist backdrop-blur transition-colors hover:text-mist-bright"
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="animate-modal-pop relative flex h-[70vh] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-line bg-void shadow-2xl sm:w-[70vw]"
         >
-          {expanded ? <CloseIcon /> : <ExpandIcon />}
-        </button>
+          {iframe}
+          <div className="flex shrink-0 items-center justify-end border-t border-line px-4 py-2.5">
+            <DedicatedLink href={dedicatedSrc} />
+          </div>
+          {enlargeButton}
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="mx-auto w-full max-w-3xl">
+      <div className="relative aspect-video overflow-hidden rounded-lg border border-line">
+        <div className="relative flex h-full w-full flex-col">{iframe}</div>
+        {enlargeButton}
+      </div>
+      {isPreview ? (
+        <PreviewNote dedicatedSrc={dedicatedSrc} />
+      ) : (
+        <div className="mt-2 flex justify-end">
+          <DedicatedLink href={dedicatedSrc} />
+        </div>
+      )}
     </div>
   );
 }

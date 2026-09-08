@@ -30,9 +30,10 @@ export interface Test {
   notice: string | null;
   worldHtmlSrc: string;
   /**
-   * The legend-free build of the same world, used by the comparison grid. Falls
-   * back to world.html for a test that hasn't got one, so a missing preview
-   * shows the world with its overlays rather than an empty panel.
+   * The legend-free build of the same world, used by the detail-page embed and
+   * the comparison grid. Falls back to world.html for a test that hasn't got
+   * one, so a missing preview shows the world with its overlays rather than an
+   * empty panel.
    */
   worldPreviewSrc: string;
   content: string;
@@ -84,7 +85,11 @@ export function getAllTests(): Test[] {
     .filter((entry) => entry.isDirectory())
     .map((entry) => loadTest(entry.name))
     .filter((test): test is Test => test !== null)
-    .sort((a, b) => b.date.localeCompare(a.date));
+    .sort((a, b) => {
+      const byDate = b.date.localeCompare(a.date);
+      if (byDate !== 0) return byDate;
+      return b.slug.localeCompare(a.slug, undefined, { numeric: true });
+    });
 }
 
 export function getPinnedTests(limit = 4): Test[] {
