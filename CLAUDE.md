@@ -35,11 +35,12 @@ this file" language into the model-facing text.
   `components/icons/index.ts` for two vendored marks: the model logo drawn as
   the card watermark, and the company wordmark (`*-text.tsx`) set as type
   under the model name on both the card and the detail page. Leave it out for
-  non-model entries like the hand-tuned reference.
+  non-model entries like the hand-tuned reference. Use `other` for anonymous
+  or unbranded listings — there is no company called Stealth.
 - `app/`: Next.js App Router pages: `/` (home, floating-island hero + recent
   tests), `/about` (what worldbench is), `/tests` (grid of all tests),
-  `/tests/[slug]` (intro media + the live `world.html` embedded in an
-  iframe).
+  `/tests/[slug]` (intro media + the live island preview embedded in an
+  iframe; "open in dedicated window" serves the untouched `world.html`).
 - `components/`, `lib/tests.ts`, `lib/about.ts`: site code; the `lib/*.ts`
   files are the filesystem-based loaders for `public/tests/` and
   `public/about/`.
@@ -53,10 +54,11 @@ this file" language into the model-facing text.
 Every test ships its world twice:
 
 1. `world.html` — the model's raw output, untouched. This is what
-   `/tests/<slug>` embeds and what "open in dedicated window" serves.
+   "open in dedicated window" serves.
 2. `world-preview.html` — the same world with its **legends and HUD chrome
-   taken out of the render**. This is the only thing the comparison grid
-   loads.
+   taken out of the render**. This is what `/tests/<slug>` embeds and what
+   the comparison grid loads. The detail page marks that frame as a
+   preview and points to `world.html` via "open in dedicated window".
 
 **Comparison views must never show legends.** Comparing models is a
 high-level, visual judgement — is this island good? — and every world

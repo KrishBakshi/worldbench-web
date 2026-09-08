@@ -31,8 +31,9 @@ Three pages:
   image, and a placement graph of how the biomes relate to each other.
 - **View Tests**: a grid of every test, searchable by name, model, or
   provider and filterable by provider badge, each card opening into its own
-  page with an intro clip, the test date, and the live, interactive
-  `world.html` embedded below it. Under that world, **Compare models**
+  page with an intro clip, the test date, and the live island preview
+  (HUD chrome off) embedded below it. **Open in dedicated window** serves
+  the untouched `world.html`. Under that world, **Compare models**
   opens a grid that puts it side by side with the worlds from up to five
   other tests, added one panel at a time.
 
@@ -42,12 +43,15 @@ Drop a new folder in `public/tests/<slug>/` with:
 - `meta.mdx`: frontmatter (`title`, `model`, `provider`, `date`, `pinned`,
   plus optional `summary`, `xPost`) followed by optional notes. `provider`
   keys into the company name and logo; leave it out for non-model entries
-  like the hand-tuned reference.
+  like the hand-tuned reference. A new company also needs an entry in
+  `lib/providers.ts` and vendored marks in `components/icons`. Use `other`
+  for anonymous or unbranded listings.
 - `world.html`: the model's raw output
 - `world-preview.html`: the same world with its legend / HUD overlays
-  commented out of the render, which is what the comparison grid loads.
-  Comparing islands side by side means comparing islands, not four
-  different HUDs at once.
+  commented out of the render, which is what the detail page and the
+  comparison grid load. Comparing islands side by side means comparing
+  islands, not four different HUDs at once. The raw `world.html` is what
+  "open in dedicated window" serves.
 - optionally `intro.mp4` / `intro.webm` / `intro.gif`
 
 No code changes needed, the site reads `public/tests/` at build time.
