@@ -235,10 +235,32 @@ body {
   animation: modal-pop 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* World embed veil: three mist points breathe while the island compiles.
+   Same palette as the PREVIEW label — not a spinner, just a quiet pulse
+   over the void so the iframe's empty/half-drawn frames never show. */
+@keyframes mist-dot {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.animate-mist-dot {
+  animation: mist-dot 1.6s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-backdrop-fade,
   .animate-modal-pop {
     animation: none;
+  }
+
+  .animate-mist-dot {
+    animation: none;
+    opacity: 0.55;
   }
 }
 

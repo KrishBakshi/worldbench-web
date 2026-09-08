@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import MissingWorldBanner from "@/components/tests/MissingWorldBanner";
+import { IslandVeil, useIslandReady } from "@/components/tests/IslandVeil";
 
 function ExpandIcon() {
   return (
@@ -177,6 +178,7 @@ export default function WorldEmbed({
   const [expanded, setExpanded] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const isPreview = Boolean(src && dedicatedSrc && src !== dedicatedSrc);
+  const ready = useIslandReady(iframeRef, src, expanded);
 
   useEffect(() => {
     if (!expanded || !src) return;
@@ -247,7 +249,7 @@ export default function WorldEmbed({
       type="button"
       onClick={() => setExpanded((v) => !v)}
       aria-label={expanded ? "Close" : "Enlarge"}
-      className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-void-deep/80 text-mist backdrop-blur transition-colors hover:text-mist-bright"
+      className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-void-deep/80 text-mist backdrop-blur transition-colors hover:text-mist-bright"
     >
       {expanded ? <CloseIcon /> : <ExpandIcon />}
     </button>
@@ -262,8 +264,11 @@ export default function WorldEmbed({
         <div
           onClick={(e) => e.stopPropagation()}
           className="animate-modal-pop relative flex h-[70vh] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-line bg-void shadow-2xl sm:w-[70vw]"
+          aria-busy={!ready}
         >
           {iframe}
+          <IslandVeil ready={ready} />
+          {!ready && <span className="sr-only">Loading island</span>}
           <div className="flex shrink-0 items-center justify-end border-t border-line px-4 py-2.5">
             {dedicatedSrc && <DedicatedLink href={dedicatedSrc} />}
           </div>
@@ -275,8 +280,13 @@ export default function WorldEmbed({
 
   return (
     <div className="mx-auto w-full max-w-3xl">
-      <div className="relative aspect-video overflow-hidden rounded-lg border border-line">
+      <div
+        className="relative aspect-video overflow-hidden rounded-lg border border-line"
+        aria-busy={!ready}
+      >
         <div className="relative flex h-full w-full flex-col">{iframe}</div>
+        <IslandVeil ready={ready} />
+        {!ready && <span className="sr-only">Loading island</span>}
         {enlargeButton}
       </div>
       {isPreview && dedicatedSrc ? (
