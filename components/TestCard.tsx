@@ -25,7 +25,7 @@ export default function TestCard({
   const wordmark = getProviderWordmark(test.provider);
 
   return (
-    <FastCard href={`/tests/${test.slug}`}>
+    <FastCard href={`/tests/${test.slug}`} documentHref={test.worldPreviewSrc}>
       <div
         className={`relative flex w-full flex-col items-center justify-center overflow-hidden px-4 ${
           compact ? "aspect-[4/3]" : "aspect-video"
