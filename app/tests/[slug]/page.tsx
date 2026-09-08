@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { preconnect, preload } from "react-dom";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { getAllTests, getTestBySlug, type Test } from "@/lib/tests";
 import WorldEmbed from "@/components/tests/WorldEmbed";
@@ -46,16 +45,6 @@ export default async function TestDetailPage({
   const { slug } = await params;
   const test = getTestBySlug(slug);
   if (!test) notFound();
-
-  // Kick the island document (and the CDNs every world hits for Three.js)
-  // before the iframe element is parsed, so the embed isn't a second round
-  // trip after the page shell.
-  if (test.worldPreviewSrc) {
-    preload(test.worldPreviewSrc, { as: "document" });
-  }
-  preconnect("https://cdn.jsdelivr.net");
-  preconnect("https://unpkg.com");
-  preconnect("https://cdnjs.cloudflare.com");
 
   // Parsed as UTC so an ISO date like "2026-07-20" doesn't shift a day in
   // negative-offset timezones.
