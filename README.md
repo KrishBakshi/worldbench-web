@@ -46,7 +46,9 @@ Drop a new folder in `public/tests/<slug>/` with:
   like the hand-tuned reference. A new company also needs an entry in
   `lib/providers.ts` and vendored marks in `components/icons`. Use `other`
   for anonymous or unbranded listings.
-- `world.html`: the model's raw output
+- `world.html`: the model's raw output. If this file isn't in the folder yet,
+  the test still lists; the detail page shows a 404 banner in place of the
+  island instead of loading the site's 404 inside the frame.
 - `world-preview.html`: the same world with its legend / HUD overlays
   commented out of the render, which is what the detail page and the
   comparison grid load. Comparing islands side by side means comparing
