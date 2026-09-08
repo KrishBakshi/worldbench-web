@@ -8,7 +8,7 @@ import KimiIcon from "./kimi";
 import ZaiIcon from "./zai";
 import DeepSeekIcon from "./deepseek";
 import MetaIcon from "./meta";
-import StealthIcon from "./stealth";
+import OtherIcon from "./other";
 import AnthropicTextIcon from "./anthropic-text";
 import OpenAITextIcon from "./openai-text";
 import GoogleTextIcon from "./google-text";
@@ -27,7 +27,8 @@ export type { WordmarkProps };
  * card watermark. The mark is the *model's* logo, while the label under the
  * model name is the company — Claude for Anthropic, Gemini for Google, Qwen for
  * Alibaba, Kimi for Moonshot AI. Meta's infinity mark stands in for Muse
- * Spark (no separate model logo in the set).
+ * Spark (no separate model logo in the set). `other` is the catch-all for
+ * unbranded listings, not a lab.
  *
  * Artwork is vendored from @lobehub/icons-static-svg (MIT) rather than taken as
  * a dependency: the React package `@lobehub/icons` peer-depends on antd and
@@ -44,7 +45,7 @@ export const PROVIDER_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement
   zai: ZaiIcon,
   deepseek: DeepSeekIcon,
   meta: MetaIcon,
-  stealth: StealthIcon,
+  other: OtherIcon,
 };
 
 export function getProviderIcon(

@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
  * that needs one, not specific to a single model.
  *
  * Supports inline `[text](url)` markdown links, rendered as new-tab anchors,
- * so a notice can point at e.g. the test that later revealed a stealth model.
+ * so a notice can point at e.g. the test that later revealed an anonymous listing.
  */
 const LINK_PATTERN = /\[([^\]]+)\]\(([^)]+)\)/g;
 

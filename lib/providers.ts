@@ -19,7 +19,8 @@ export const PROVIDERS: Record<string, Provider> = {
   zai: { name: "Z.ai" },
   deepseek: { name: "DeepSeek" },
   meta: { name: "Meta" },
-  stealth: { name: "Stealth" },
+  /** Catch-all for anonymous or unbranded listings — not a company name. */
+  other: { name: "Other" },
 };
 
 export function getProvider(slug: string | null): Provider | null {
