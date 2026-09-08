@@ -13,7 +13,7 @@ export default function SocialLinks() {
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-mist underline underline-offset-2 transition-colors hover:text-mist-bright"
+            className="text-mist underline-offset-2 transition-colors hover:text-mist-bright hover:underline"
           >
             {link.label}
           </a>

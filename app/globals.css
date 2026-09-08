@@ -145,10 +145,13 @@ body {
 }
 
 .prose a {
+  text-decoration: none;
+  text-underline-offset: 2px;
   transition: color 0.2s ease;
 }
 
 .prose a:hover {
+  text-decoration: underline;
   color: var(--color-mist-bright);
 }
 

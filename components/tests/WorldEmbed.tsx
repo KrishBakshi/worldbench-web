@@ -85,7 +85,7 @@ function DedicatedLink({ href }: { href: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-mist transition-colors hover:text-mist-bright"
+      className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-mist underline-offset-2 transition-colors hover:text-mist-bright hover:underline"
     >
       Open in dedicated window
       <ExternalLinkIcon />
@@ -153,7 +153,7 @@ function PreviewNote({ dedicatedSrc }: { dedicatedSrc: string }) {
             href={dedicatedSrc}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-mist-bright underline underline-offset-2 hover:text-mist"
+            className="text-mist-bright underline-offset-2 hover:text-mist hover:underline"
           >
             dedicated window
           </a>

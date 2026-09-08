@@ -435,10 +435,10 @@ export default function CompareModels({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-2 text-sm text-mist transition-colors hover:text-mist-bright"
+        className="group inline-flex items-center gap-2 text-sm text-mist transition-colors hover:text-mist-bright"
       >
         <GridIcon />
-        <span className="underline underline-offset-2">Compare models</span>
+        <span className="underline-offset-2 group-hover:underline">Compare models</span>
       </button>
 
       {open && (

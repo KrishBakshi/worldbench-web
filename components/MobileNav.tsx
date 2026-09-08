@@ -76,7 +76,7 @@ export default function MobileNav({ links }: { links: NavLink[] }) {
                 key={link.href}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className={`rounded-md px-3 py-2 text-xs uppercase tracking-[0.15em] transition-colors ${
+                className={`rounded-md px-3 py-2 text-xs uppercase tracking-[0.15em] underline-offset-2 transition-colors hover:underline ${
                   active
                     ? "bg-line/50 text-mist-bright"
                     : "text-mist hover:bg-line/40 hover:text-mist-bright"

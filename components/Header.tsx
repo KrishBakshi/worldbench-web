@@ -37,8 +37,8 @@ export default function Header() {
               href={link.href}
               className={
                 active
-                  ? "text-mist-bright"
-                  : "text-mist transition-colors hover:text-mist-bright"
+                  ? "text-mist-bright underline-offset-2 hover:underline"
+                  : "text-mist underline-offset-2 transition-colors hover:text-mist-bright hover:underline"
               }
             >
               {link.label}

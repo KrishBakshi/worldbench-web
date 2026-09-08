@@ -29,7 +29,7 @@ function renderNotice(text: string) {
         href={match[2]}
         target="_blank"
         rel="noopener noreferrer"
-        className="underline underline-offset-2 hover:text-void/70"
+        className="underline-offset-2 hover:text-void/70 hover:underline"
       >
         {match[1]}
       </a>
