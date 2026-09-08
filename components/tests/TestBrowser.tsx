@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Test } from "@/lib/tests";
 import TestCard from "@/components/TestCard";
+import ProviderFilters from "@/components/tests/ProviderFilters";
 import { isShortcut, useShortcutLabel } from "@/lib/shortcut";
 
 export interface ProviderOption {
@@ -114,26 +115,11 @@ export default function TestBrowser({
           )}
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {providers.map((provider) => {
-            const isActive = active === provider.slug;
-            return (
-              <button
-                key={provider.slug}
-                type="button"
-                aria-pressed={isActive}
-                onClick={() => select(provider.slug)}
-                className={`rounded-md border px-3.5 py-1 text-xs uppercase tracking-[0.12em] transition-colors ${
-                  isActive
-                    ? "border-mist-bright bg-mist-bright text-void"
-                    : "border-line text-mist hover:border-mist hover:text-mist-bright"
-                }`}
-              >
-                {provider.name}
-              </button>
-            );
-          })}
-        </div>
+        <ProviderFilters
+          providers={providers}
+          active={active}
+          onSelect={select}
+        />
       </div>
 
       {filtered.length > 0 ? (
