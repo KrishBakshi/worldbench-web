@@ -71,7 +71,7 @@ export default async function TestDetailPage({
 
   return (
     <section className="mx-auto max-w-3xl px-6 py-10 md:px-10">
-      <Link href="/tests" className="text-sm text-mist underline-offset-2 hover:text-mist-bright hover:underline">
+      <Link href="/tests" className="text-sm text-mist hover:text-mist-bright">
         &larr; Back
       </Link>
 
