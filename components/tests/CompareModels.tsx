@@ -1,6 +1,17 @@
 "use client";
 
-import { createElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  createElement,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type ReactNode,
+  type RefObject,
+} from "react";
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "framer-motion";
 import { getProvider } from "@/lib/providers";
 import { isShortcut, useShortcutLabel } from "@/lib/shortcut";
 import {
@@ -10,6 +21,7 @@ import {
   wordmarkSize,
 } from "@/components/icons";
 import MissingWorldBanner from "@/components/tests/MissingWorldBanner";
+import { IslandVeil, useIslandReady } from "@/components/tests/IslandVeil";
 
 /**
  * A test reduced to what the comparison grid needs: enough to label a panel and
@@ -137,8 +149,11 @@ function ComparePanel({
   entry: CompareEntry;
   onRemove: (() => void) | null;
 }) {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const ready = useIslandReady(iframeRef, entry.worldPreviewSrc);
+
   return (
-    <div className="flex min-h-0 flex-col overflow-hidden rounded-lg border border-line bg-void">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-line bg-void">
       <div className="flex shrink-0 items-center justify-between gap-2 border-b border-line px-3 py-2">
         <PanelLabel entry={entry} />
         {onRemove && (
@@ -152,74 +167,163 @@ function ComparePanel({
           </button>
         )}
       </div>
-      {entry.worldPreviewSrc ? (
-        <iframe
-          src={entry.worldPreviewSrc}
-          title={`${entry.title} world`}
-          className="min-h-0 w-full flex-1"
-          loading="lazy"
-          sandbox="allow-scripts allow-same-origin"
-        />
-      ) : (
-        <div className="min-h-0 w-full flex-1">
+      <div
+        className="relative min-h-0 w-full flex-1"
+        aria-busy={Boolean(entry.worldPreviewSrc) && !ready}
+      >
+        {entry.worldPreviewSrc ? (
+          <>
+            <iframe
+              ref={iframeRef}
+              src={entry.worldPreviewSrc}
+              title={`${entry.title} world`}
+              className="absolute inset-0 h-full w-full border-0"
+              sandbox="allow-scripts allow-same-origin"
+            />
+            <IslandVeil ready={ready} />
+            {!ready && <span className="sr-only">Loading island</span>}
+          </>
+        ) : (
           <MissingWorldBanner />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
 
 /**
- * The empty slot beside the first world. On opening there is nothing to compare
- * against yet, so the invitation is panel-sized and sits where the second world
- * will land.
+ * One control, two seats. Beside the first world it's a dashed tile the same
+ * size as a panel; once a second world fills that seat it morphs (layoutId)
+ * into the bar under the grid so the button is followed, not hunted for.
  */
-function AddPanel({ onClick, shortcut }: { onClick: () => void; shortcut: string | null }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="group flex min-h-[12rem] flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-line text-mist transition-colors hover:border-mist hover:text-mist-bright"
-    >
-      <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-line transition-colors group-hover:border-mist">
-        <PlusIcon className="h-5 w-5" />
-      </span>
-      <span className="text-[11px] uppercase tracking-[0.15em]">Add model</span>
-      {shortcut && (
-        <kbd className="rounded border border-line px-1.5 py-0.5 text-[10px] tracking-wide">
-          {shortcut}
-        </kbd>
-      )}
-    </button>
-  );
-}
-
-/**
- * The add control once the comparison is running: same job as AddPanel, kept
- * small and under the worlds so it takes room from them rather than standing in
- * for one of them.
- */
-function AddButton({
+function AddControl({
+  variant,
   onClick,
   shortcut,
 }: {
+  variant: "tile" | "bar";
   onClick: () => void;
   shortcut: string | null;
 }) {
+  const reduceMotion = useReducedMotion();
+  const isTile = variant === "tile";
+
   return (
-    <button
+    <motion.button
       type="button"
+      layoutId="compare-add"
+      transition={
+        reduceMotion
+          ? { duration: 0 }
+          : { type: "spring", stiffness: 280, damping: 32, mass: 0.9 }
+      }
       onClick={onClick}
-      className="flex h-9 shrink-0 items-center gap-2 rounded-lg border border-dashed border-line px-3 text-mist transition-colors hover:border-mist hover:text-mist-bright"
+      aria-label="Add a model to the comparison"
+      className={
+        isTile
+          ? "flex min-h-0 w-full flex-1 flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-line text-mist transition-colors hover:border-mist hover:text-mist-bright"
+          : "flex h-11 w-full shrink-0 items-center justify-center gap-2 border-t border-line text-mist transition-colors hover:bg-line/30 hover:text-mist-bright animate-add-land"
+      }
     >
-      <PlusIcon className="h-4 w-4" />
+      <PlusIcon className="h-3.5 w-3.5" />
       <span className="text-[10px] uppercase tracking-[0.15em]">Add model</span>
       {shortcut && (
         <kbd className="rounded border border-line px-1.5 py-0.5 text-[10px] tracking-wide">
           {shortcut}
         </kbd>
       )}
-    </button>
+    </motion.button>
+  );
+}
+
+/**
+ * Layout by count:
+ * 1    the world, with Add as a matching seat beside it
+ * 2–3  one row, side by side; Add sits in the bar below
+ * 4    2×2
+ * 5    three on top, two below at the same cell width (the open third
+ *      of that row is the seat the sixth world fills)
+ * 6    3×2
+ */
+function CompareLayout({
+  panels,
+  gridRef,
+  renderPanel,
+  addTile,
+}: {
+  panels: CompareEntry[];
+  gridRef: RefObject<HTMLDivElement | null>;
+  renderPanel: (panel: CompareEntry, index: number) => ReactNode;
+  addTile: ReactNode;
+}) {
+  const n = panels.length;
+  const shell = "min-h-0 w-full flex-1 gap-4 p-4";
+
+  if (n === 1) {
+    return (
+      <div
+        ref={gridRef}
+        className={`grid ${shell}`}
+        style={{
+          gridTemplateColumns: addTile
+            ? "repeat(2, minmax(0, 1fr))"
+            : "minmax(0, 1fr)",
+        }}
+      >
+        {renderPanel(panels[0], 0)}
+        {addTile}
+      </div>
+    );
+  }
+
+  if (n <= 3) {
+    return (
+      <div
+        ref={gridRef}
+        className={`grid ${shell}`}
+        style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}
+      >
+        {panels.map(renderPanel)}
+      </div>
+    );
+  }
+
+  if (n === 4) {
+    return (
+      <div ref={gridRef} className={`grid grid-cols-2 grid-rows-2 ${shell}`}>
+        {panels.map(renderPanel)}
+      </div>
+    );
+  }
+
+  if (n === 5) {
+    return (
+      <div ref={gridRef} className={`flex flex-col ${shell}`}>
+        <div className="grid min-h-0 flex-1 grid-cols-3 gap-4">
+          {panels.slice(0, 3).map((panel, i) => renderPanel(panel, i))}
+        </div>
+        {/* Same third-width cells as the row above, centered — the gaps
+            on either side are the empty seat, filled when the sixth lands. */}
+        <div className="grid min-h-0 flex-1 grid-cols-6 gap-4">
+          {panels.slice(3).map((panel, i) => (
+            <div
+              key={panel.slug}
+              className={`flex min-h-0 flex-col ${
+                i === 0 ? "col-span-2 col-start-2" : "col-span-2"
+              }`}
+            >
+              {renderPanel(panel, i + 3)}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div ref={gridRef} className={`grid grid-cols-3 grid-rows-2 ${shell}`}>
+      {panels.map(renderPanel)}
+    </div>
   );
 }
 
@@ -259,7 +363,7 @@ function ModelPicker({
       ?.scrollIntoView({ block: "nearest" });
   }, [activeIndex, results.length]);
 
-  function onKeyDown(e: React.KeyboardEvent) {
+  function onKeyDown(e: ReactKeyboardEvent) {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
       const step = e.key === "ArrowDown" ? 1 : -1;
@@ -278,9 +382,13 @@ function ModelPicker({
   }
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
       onClick={onClose}
-      className="animate-backdrop-fade absolute inset-0 z-10 flex items-start justify-center bg-void-deep/70 p-4 pt-[12vh] backdrop-blur-sm"
+      className="absolute inset-0 z-10 flex items-start justify-center bg-void-deep/70 p-4 pt-[12vh] backdrop-blur-sm"
     >
       <div
         onClick={(e) => e.stopPropagation()}
@@ -343,7 +451,7 @@ function ModelPicker({
           </ul>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -373,9 +481,6 @@ export default function CompareModels({
   const chosen = new Set(panels.map((panel) => panel.slug));
   const options = entries.filter((entry) => !chosen.has(entry.slug));
   const canAdd = panels.length < MAX_PANELS && options.length > 0;
-  // The grid is two columns wide, so an odd number of worlds leaves the last
-  // row half empty and the slot has somewhere to sit inside the grid.
-  const hasFreeCell = panels.length % 2 === 1;
 
   useEffect(() => {
     if (!open) return;
@@ -455,7 +560,9 @@ export default function CompareModels({
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="animate-modal-pop relative flex h-[80vh] w-full flex-col overflow-hidden rounded-lg border border-line bg-void shadow-2xl sm:w-[80vw]"
+            className={`animate-modal-pop relative flex h-[80vh] w-full flex-col overflow-hidden rounded-lg border border-line bg-void shadow-2xl ${
+              panels.length <= 2 ? "sm:w-[80vw]" : "sm:w-[92vw]"
+            }`}
           >
             <div className="flex shrink-0 items-center justify-between gap-4 border-b border-line px-4 py-3">
               <h2 className="font-display text-sm text-mist-bright">Compare models</h2>
@@ -474,54 +581,60 @@ export default function CompareModels({
               </div>
             </div>
 
-            <div className="flex min-h-0 flex-1 flex-col items-center gap-4 overflow-y-auto p-4">
-              {/* The grid takes the whole height between the header and the add
-                  button, so the worlds sit centred in the dialog: one world fills
-                  the row beside the empty slot, a pair splits it evenly. One
-                  column on phones, two from `sm` up. */}
-              <div
-                ref={gridRef}
-                className="grid min-h-0 w-full flex-1 auto-rows-[minmax(12rem,1fr)] grid-cols-1 gap-4 sm:auto-rows-fr sm:grid-cols-2"
-              >
-                {panels.map((panel, index) => (
-                  <ComparePanel
-                    key={panel.slug}
-                    entry={panel}
-                    // The test being viewed anchors the comparison and stays put.
-                    onRemove={
-                      index === 0
-                        ? null
-                        : () =>
-                            setPanels((current) =>
-                              current.filter((p) => p.slug !== panel.slug),
-                            )
-                    }
+            <LayoutGroup>
+              <div className="flex min-h-0 flex-1 flex-col">
+                <CompareLayout
+                  panels={panels}
+                  gridRef={gridRef}
+                  addTile={
+                    canAdd && panels.length === 1 ? (
+                      <div className="flex min-h-0 flex-col">
+                        <AddControl
+                          variant="tile"
+                          onClick={() => setPicking(true)}
+                          shortcut={shortcut}
+                        />
+                      </div>
+                    ) : null
+                  }
+                  renderPanel={(panel, index) => (
+                    <ComparePanel
+                      key={panel.slug}
+                      entry={panel}
+                      onRemove={
+                        index === 0
+                          ? null
+                          : () =>
+                              setPanels((current) =>
+                                current.filter((p) => p.slug !== panel.slug),
+                              )
+                      }
+                    />
+                  )}
+                />
+                {canAdd && panels.length >= 2 && (
+                  <AddControl
+                    variant="bar"
+                    onClick={() => setPicking(true)}
+                    shortcut={shortcut}
                   />
-                ))}
-                {/* An odd count leaves a cell free on the last row — that gap is
-                    where the next world goes, so the slot fills it. */}
-                {canAdd && hasFreeCell && (
-                  <AddPanel onClick={() => setPicking(true)} shortcut={shortcut} />
                 )}
               </div>
-              {/* An even count fills the rows, so the slot drops below as a small
-                  button rather than opening a row of its own and shrinking every
-                  world to make space for an empty tile. */}
-              {canAdd && !hasFreeCell && (
-                <AddButton onClick={() => setPicking(true)} shortcut={shortcut} />
-              )}
-            </div>
+            </LayoutGroup>
 
-            {picking && (
-              <ModelPicker
-                options={options}
-                onPick={(entry) => {
-                  setPanels((current) => [...current, entry]);
-                  setPicking(false);
-                }}
-                onClose={() => setPicking(false)}
-              />
-            )}
+            <AnimatePresence>
+              {picking && (
+                <ModelPicker
+                  key="picker"
+                  options={options}
+                  onPick={(entry) => {
+                    setPanels((current) => [...current, entry]);
+                    setPicking(false);
+                  }}
+                  onClose={() => setPicking(false)}
+                />
+              )}
+            </AnimatePresence>
           </div>
         </div>
       )}

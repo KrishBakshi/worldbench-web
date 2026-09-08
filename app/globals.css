@@ -252,9 +252,25 @@ body {
   animation: mist-dot 1.6s ease-in-out infinite;
 }
 
+/* Compare "Add model": a brief line-tint when the control lands as the
+   bottom bar, so the eye still finds it if the picker overlay hid the morph. */
+@keyframes add-land {
+  from {
+    background-color: color-mix(in srgb, var(--color-line) 80%, transparent);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+.animate-add-land {
+  animation: add-land 800ms ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-backdrop-fade,
-  .animate-modal-pop {
+  .animate-modal-pop,
+  .animate-add-land {
     animation: none;
   }
 
