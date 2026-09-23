@@ -9,6 +9,7 @@ import ZaiIcon from "./zai";
 import DeepSeekIcon from "./deepseek";
 import MetaIcon from "./meta";
 import NvidiaIcon from "./nvidia";
+import NexIcon from "./nex";
 import OtherIcon from "./other";
 import AnthropicTextIcon from "./anthropic-text";
 import OpenAITextIcon from "./openai-text";
@@ -20,6 +21,7 @@ import ZaiTextIcon from "./zai-text";
 import DeepSeekTextIcon from "./deepseek-text";
 import MetaTextIcon from "./meta-text";
 import NvidiaTextIcon from "./nvidia-text";
+import NexTextIcon from "./nex-text";
 import type { WordmarkProps } from "./wordmark";
 
 export type { WordmarkProps };
@@ -48,6 +50,7 @@ export const PROVIDER_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement
   deepseek: DeepSeekIcon,
   meta: MetaIcon,
   nvidia: NvidiaIcon,
+  nex: NexIcon,
   other: OtherIcon,
 };
 
@@ -77,6 +80,7 @@ export const PROVIDER_WORDMARKS: Record<string, ComponentType<WordmarkProps>> = 
   deepseek: DeepSeekTextIcon,
   meta: MetaTextIcon,
   nvidia: NvidiaTextIcon,
+  nex: NexTextIcon,
 };
 
 /**
