@@ -194,7 +194,13 @@ export default function ProviderFilters({
 
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
-          <div className="flex min-w-0 flex-1 flex-nowrap items-center gap-2 overflow-hidden">
+          {/* Sized to its chips, not to the row: `flex-1` here would fill the
+              width and strand the chevron against the right edge, a gap as wide
+              as whatever the chips happen not to use. `min-w-0` with the
+              overflow clip keeps the shrink behaviour — if a chip is still on
+              this line when space runs out, it is cut rather than pushing the
+              chevron off the row. */}
+          <div className="flex min-w-0 flex-nowrap items-center gap-2 overflow-hidden">
             {visible.map((provider) => (
               <Chip
                 key={provider.slug}
