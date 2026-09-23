@@ -616,7 +616,10 @@ scene.add(ambientLight);
 
 function updateDayNight(time){
 const t=(time%DAY_LEN)/DAY_LEN;
-const angle=t*Math.PI*2-Math.PI/2;
+/* worldbench preview: the sun angle is pinned so every world is compared under the same light. 
+   Only this angle is held. The world clock keeps advancing, so weather, seasons, water and 
+   creatures run as the model wrote them. */
+const angle=1.1;
 const sr=110;
 const sx=Math.cos(angle)*sr,sy=Math.sin(angle)*sr,sz=-25;
 sunMesh.position.set(sx,sy,sz);

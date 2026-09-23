@@ -1555,7 +1555,10 @@
 
             updateWeather(time);
             updateSeasons(time);
-            updateSunPosition(time);
+            /* worldbench preview: the sun angle is pinned so every world is compared under the 
+               same light. Only this angle is held. The world clock keeps advancing, so 
+               weather, seasons, water and creatures run as the model wrote them. */
+            updateSunPosition(157);
 
             // subtle water animation
             waterMesh.position.y = SEA_LEVEL * VOXEL + 0.2 + Math.sin(time * 0.3) * 0.1;

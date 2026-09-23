@@ -796,7 +796,10 @@ function animate(){
   const dt=Math.min(clock.getDelta(),0.05); T+=dt;
 
   /* day / night */
-  const sa=(T/DAY_LEN)*Math.PI*2 + 0.6;
+  /* worldbench preview: the sun angle is pinned so every world is compared under the same 
+     light. Only this angle is held. The world clock keeps advancing, so weather, seasons, 
+     water and creatures run as the model wrote them. */
+  const sa=1.1;
   const dayF=clamp(Math.sin(sa),0,1);
   const sd=new THREE.Vector3(Math.cos(sa),Math.sin(sa),0.35).normalize();
   sunMesh.position.copy(sd).multiplyScalar(170); sunMesh.lookAt(0,0,0);

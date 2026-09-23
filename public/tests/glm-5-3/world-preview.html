@@ -488,7 +488,10 @@ function animate(){
 
   // day cycle
   const dayT=(t/100)%1;
-  const ang=dayT*Math.PI*2-Math.PI/2;
+  /* worldbench preview: the sun angle is pinned so every world is compared under the same 
+     light. Only this angle is held. The world clock keeps advancing, so weather, seasons, 
+     water and creatures run as the model wrote them. */
+  const ang=1.1;
   const sx=Math.cos(ang)*150,sy=Math.sin(ang)*130,sz=55;
   sunLight.position.set(sx,sy,sz);
   const dayI=clamp(Math.sin(ang),0,1);

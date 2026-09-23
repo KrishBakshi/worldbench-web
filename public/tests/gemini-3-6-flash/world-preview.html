@@ -915,7 +915,10 @@
 
             // 1. Day / Night Cycle (Sun Revolution)
             const dayCycleSpeed = 0.05;
-            const sunAngle = time * dayCycleSpeed;
+            /* worldbench preview: the sun angle is pinned so every world is compared under the 
+               same light. Only this angle is held. The world clock keeps advancing, so 
+               weather, seasons, water and creatures run as the model wrote them. */
+            const sunAngle = 1.1;
             const sunDist = 120;
             sunLight.position.x = Math.cos(sunAngle) * sunDist;
             sunLight.position.y = Math.sin(sunAngle) * sunDist;

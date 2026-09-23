@@ -67,10 +67,33 @@ the scene. Four of those at once is four different UIs arguing with each
 other instead of four islands next to each other. So the chrome comes off
 before a world goes in the grid, always.
 
-The preview is generated, not hand-edited: copy `world.html` verbatim and
-append one block before `</body>` that comments the overlay out of the
-render, listing that world's own top-level overlay ids. Leave loading
-indicators alone — they remove themselves once the scene is up.
+The preview is generated, not hand-edited, and it is two changes to a
+verbatim copy of `world.html`:
+
+1. **Chrome off.** Append one block before `</body>` that comments the
+   overlay out of the render, listing that world's own top-level overlay
+   ids. Leave loading indicators alone — they remove themselves once the
+   scene is up.
+2. **Sun pinned.** Every world derives its sun from a single line: an angle
+   computed from its clock (`const ang = (time / DAY) * Math.PI * 2`, or
+   that idea in the model's own spelling). Replace the right-hand side with
+   `1.1`. In all of them elevation is `sin(angle)`, so 1.1 rad puts the sun
+   high and a little to the side, late morning. Mark the edit with a comment
+   naming it a preview pin.
+
+Pin the angle, never the clock. The clock also drives weather, seasons,
+water, wind and creatures, and freezing it stops the world dead; a preview
+is meant to be a live island under fixed light, not a photograph. One
+world needs the pin twice (`ox-alpha` uses the same expression again for
+its zone update); one has no usable angle (`deepseek-v4-flash` orbits the
+sun by azimuth only) and instead takes a constant where its
+`updateSunPosition(time)` call passes the clock.
+
+The cost of pinning is that nocturnal content never appears in a preview:
+fireflies, lanterns, bioluminescence, animals that only come out after
+dark. That is the trade. The grid asks whether an island is good at a
+glance, and `world.html` still runs the full cycle behind "open in
+dedicated window".
 
 Hide the overlay rather than deleting its markup. Most of these worlds
 populate their legend from script (`getElementById('legend').innerHTML =

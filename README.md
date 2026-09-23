@@ -50,10 +50,11 @@ Drop a new folder in `public/tests/<slug>/` with:
   the test still lists; the detail page shows a 404 banner in place of the
   island instead of loading the site's 404 inside the frame.
 - `world-preview.html`: the same world with its legend / HUD overlays
-  commented out of the render, which is what the detail page and the
-  comparison grid load. Comparing islands side by side means comparing
-  islands, not four different HUDs at once. The raw `world.html` is what
-  "open in dedicated window" serves.
+  commented out of the render and its sun pinned to late morning, which is
+  what the detail page and the comparison grid load. Comparing islands side
+  by side means comparing islands, not four different HUDs at once, and not
+  one island at noon against another at midnight. The raw `world.html` is
+  what "open in dedicated window" serves, day/night cycle and all.
 - optionally `intro.mp4` / `intro.webm` / `intro.gif`
 
 No code changes needed, the site reads `public/tests/` at build time.

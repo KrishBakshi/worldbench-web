@@ -1246,7 +1246,10 @@
         dayTime = (dayTime + delta * 0.02) % 1.0;
       }
 
-      const sunAngle = dayTime * Math.PI * 2;
+      /* worldbench preview: the sun angle is pinned so every world is compared under the same 
+         light. Only this angle is held. The world clock keeps advancing, so weather, seasons, 
+         water and creatures run as the model wrote them. */
+      const sunAngle = 1.1;
       const sunX = Math.cos(sunAngle) * sunDistance;
       const sunY = Math.sin(sunAngle) * sunDistance;
       const sunZ = 20;

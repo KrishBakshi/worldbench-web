@@ -878,7 +878,10 @@ const SEASONS=['Spring','Summer','Autumn','Winter'];
 const SUN_TINT=[[0xffedda,0xfff1d2],[0xfff3cd,0xfff6d8],[0xffd9a8,0xffdb9e],[0xcfe2ff,0xd6e4ff]];
 function dayParams(t){
  const cyc=fract(t/DAYLEN);
- const th=cyc*Math.PI*2-Math.PI*.5;
+ /* worldbench preview: the sun angle is pinned so every world is compared under the same light. 
+    Only this angle is held. The world clock keeps advancing, so weather, seasons, water and 
+    creatures run as the model wrote them. */
+ const th=1.1;
  const el=Math.sin(th);
  const sunP=new THREE.Vector3(Math.cos(th)*920,el*820+30,270);
  return{th,el,sunP,cyc};

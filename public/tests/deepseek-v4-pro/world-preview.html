@@ -1162,7 +1162,10 @@
             weatherCycle += dt * 0.4;
 
             // Sun position
-            const sunAngle = dayProgress * Math.PI * 2;
+            /* worldbench preview: the sun angle is pinned so every world is compared under the 
+               same light. Only this angle is held. The world clock keeps advancing, so 
+               weather, seasons, water and creatures run as the model wrote them. */
+            const sunAngle = 1.1;
             const sunY = Math.sin(sunAngle) * 80;
             const sunX = Math.cos(sunAngle) * 80;
             const sunZ = 25;

@@ -763,7 +763,10 @@ try {
   const warmLights=[0xffefd7,0xffebc5,0xffd2a4,0xdbe9ff].map(c=>new THREE.Color(c));
   function updateClimate(t){
     const yearPhase=t/240,seasonPhase=(yearPhase%1)*4,seasonIndex=Math.floor(seasonPhase),blend=smooth(.75,1,seasonPhase%1);
-    const theta=t/80*Math.PI*2+Math.PI*.40;
+    /* worldbench preview: the sun angle is pinned so every world is compared under the same 
+       light. Only this angle is held. The world clock keeps advancing, so weather, seasons, 
+       water and creatures run as the model wrote them. */
+    const theta=1.1;
     const altitude=Math.sin(theta),daylight=smooth(-.16,.48,altitude);
     sun.position.set(Math.cos(theta)*128,altitude*130,-100);
     sun.quaternion.copy(camera.quaternion);

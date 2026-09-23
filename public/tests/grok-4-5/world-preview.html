@@ -938,7 +938,10 @@
 
   function updateSun(dt) {
     worldTime += dt;
-    const dayAngle = worldTime * 0.12;
+    /* worldbench preview: the sun angle is pinned so every world is compared under the same 
+       light. Only this angle is held. The world clock keeps advancing, so weather, seasons, 
+       water and creatures run as the model wrote them. */
+    const dayAngle = 1.1;
     const sx = Math.cos(dayAngle) * 220;
     const sy = Math.sin(dayAngle) * 160;
     const sz = Math.sin(dayAngle * 0.5) * 80;

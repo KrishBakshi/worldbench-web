@@ -1416,7 +1416,10 @@ function seasonState(t){
 }
 
 function updateSun(t){
-  const th=t/DAY_LEN*Math.PI*2+0.35;
+  /* worldbench preview: the sun angle is pinned so every world is compared under the same 
+     light. Only this angle is held. The world clock keeps advancing, so weather, seasons, 
+     water and creatures run as the model wrote them. */
+  const th=1.1;
   const alt=Math.sin(th);
   sunMesh.position.set(Math.cos(th)*300,alt*260,-90);
   sunMesh.visible=alt>-0.15;
@@ -1621,7 +1624,7 @@ function animate(){
   const dt=Math.min(clock.getDelta(),0.05);
   tNow+=dt;
   const {seas,daylight,alt,phase}=updateSun(tNow);
-  updateZones(tNow,dt,seas,daylight,alt,Math.cos(tNow/DAY_LEN*Math.PI*2+0.35));
+  updateZones(tNow,dt,seas,daylight,alt,Math.cos(1.1));
   updateVolcano(tNow,dt);
   updateAnimals(tNow,dt);
   updateMisc(tNow,dt);
