@@ -96,10 +96,11 @@ function DedicatedLink({ href }: { href: string }) {
 }
 
 /**
- * The line under the on-page island: this frame is the HUD-free preview, and
- * the original generation lives behind "Open in dedicated window". The (i)
- * discloses the why — same info-mark as the header wordmark, click rather than
- * hover so the copy can wrap.
+ * The line under the on-page island: this frame is the preview build, with its
+ * chrome hidden and its sun pinned, and the original generation lives behind
+ * "Open in dedicated window". The (i) discloses both of those, so nobody reads
+ * a fixed morning as the model's own choice. Same info-mark as the header
+ * wordmark, click rather than hover so the copy can wrap.
  */
 function PreviewNote({ dedicatedSrc }: { dedicatedSrc: string }) {
   const [open, setOpen] = useState(false);
@@ -127,19 +128,25 @@ function PreviewNote({ dedicatedSrc }: { dedicatedSrc: string }) {
   return (
     <div ref={rootRef} className="mt-2">
       <div className="flex items-center gap-2">
+        {/* Mark and label are one control: the word is what people aim at, and
+            a lone (i) beside inert text reads as two separate things when it is
+            one affordance. Colour lives on the button so the icon, which draws
+            in currentColor, lights with the label. */}
         <button
           type="button"
           aria-expanded={open}
           aria-controls={noteId}
           aria-label="About this preview"
           onClick={() => setOpen((v) => !v)}
-          className="flex size-5 shrink-0 items-center justify-center rounded-full text-mist transition-colors hover:text-mist-bright focus-visible:text-mist-bright focus-visible:outline-none"
+          className="flex cursor-help items-center gap-2 text-mist transition-colors hover:text-mist-bright focus-visible:text-mist-bright focus-visible:outline-none"
         >
-          <InfoIcon />
+          <span className="flex size-5 shrink-0 items-center justify-center rounded-full">
+            <InfoIcon />
+          </span>
+          <span className="text-[10px] tracking-[0.15em] uppercase">
+            Preview
+          </span>
         </button>
-        <span className="text-[10px] uppercase tracking-[0.15em] text-mist">
-          Preview
-        </span>
         <span className="ml-auto">
           <DedicatedLink href={dedicatedSrc} />
         </span>
@@ -149,15 +156,21 @@ function PreviewNote({ dedicatedSrc }: { dedicatedSrc: string }) {
           id={noteId}
           className="mt-2 max-w-xl text-xs leading-relaxed text-mist"
         >
-          This is a preview of the original generation. Legends and HUD chrome
-          are hidden so you can see the island. Open the original in a{" "}
+          This is a preview of the original generation, built for comparing
+          islands: its legend and HUD chrome are hidden, and its day/night cycle
+          is pinned to late morning so every model is seen under the same light.
+          Everything else runs as the model wrote it. The original, with its
+          legend, clock, weather readout and full day/night cycle, opens under{" "}
+          {/* Set as the tag it names: the same small-caps label as the control
+              in the row above, so the sentence points at a thing on screen
+              rather than describing one. */}
           <a
             href={dedicatedSrc}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-mist-bright underline-offset-2 hover:text-mist hover:underline"
+            className="inline-flex items-center rounded border border-line px-1.5 py-0.5 align-baseline text-[10px] tracking-[0.15em] text-mist-bright uppercase transition-colors hover:border-mist hover:text-mist-bright"
           >
-            dedicated window
+            Open in dedicated window
           </a>
           .
         </p>

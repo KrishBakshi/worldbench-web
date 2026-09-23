@@ -101,6 +101,87 @@ function CloseIcon({ className }: { className?: string }) {
   );
 }
 
+function InfoIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="size-3"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 16v-4" />
+      <path d="M12 8h.01" />
+    </svg>
+  );
+}
+
+/**
+ * The disclosure beside the dialog heading: what the grid is showing is not the
+ * world as the model wrote it. Every panel has had its legend and HUD hidden and
+ * its sun pinned, so that four islands can be judged as islands under one
+ * light. Someone reading the grid should know that before drawing conclusions
+ * from it.
+ *
+ * Built like AboutTooltipLink (group-hover / group-focus-within, CSS rather than
+ * Radix), with two differences: the copy is long enough to need wrapping and a
+ * width, and the tooltip hangs below-left of the badge so it never runs off the
+ * dialog's left edge. `tabIndex` makes it keyboard-reachable even though it does
+ * nothing on click; the `aria-label` carries the same sentence in plain text, so
+ * the visual tooltip is decorative.
+ *
+ * The last sentence names a control rather than describing one, and sets it as
+ * the tag it is — matching how the preview note on a test page points at the
+ * same label.
+ */
+function PreviewOnlyBadge() {
+  const lead =
+    "Preview only. Every island in this grid has its legend and HUD hidden and " +
+    "its day/night cycle pinned to late morning, so the models are compared " +
+    "under the same light. The original generation, with its legend, clock, " +
+    "weather readout and full day/night cycle, is behind ";
+  const tag = "Open in dedicated window";
+  const tail = " on each test's page.";
+
+  return (
+    <span className="group relative inline-flex">
+      <span
+        tabIndex={0}
+        role="note"
+        aria-label={`${lead}${tag}${tail}`}
+        className="inline-flex cursor-help items-center gap-1.5 rounded-full border border-line px-2 py-0.5 text-[10px] tracking-[0.12em] text-mist uppercase transition-colors group-hover:text-mist-bright group-focus-within:text-mist-bright focus-visible:outline-none"
+      >
+        <InfoIcon />
+        Preview only
+      </span>
+
+      {/* pointer-events-none so the tooltip never sits between the pointer and
+          the panels behind it; the reveal delay mirrors radix's default. */}
+      <span
+        role="tooltip"
+        className="pointer-events-none absolute top-full left-0 z-10 mt-2 w-72 scale-95 rounded-md bg-mist-bright px-3 py-2 text-xs leading-relaxed text-void opacity-0 shadow-md transition-[opacity,transform] duration-150 group-hover:scale-100 group-hover:opacity-100 group-hover:delay-300 group-focus-within:scale-100 group-focus-within:opacity-100"
+      >
+        {lead}
+        {/* The tag reads on the tooltip's light fill, so it borders and sets in
+            the void ink rather than the mist used against the dark page. */}
+        <span className="inline-flex items-center rounded border border-void/25 px-1.5 py-0.5 align-baseline text-[10px] tracking-[0.15em] whitespace-nowrap text-void uppercase">
+          {tag}
+        </span>
+        {tail}
+        {/* Arrow: a rotated square tucked under the popover's top edge. */}
+        <span
+          aria-hidden="true"
+          className="absolute -top-1 left-4 size-2 rotate-45 rounded-[1px] bg-mist-bright"
+        />
+      </span>
+    </span>
+  );
+}
+
 function SearchIcon() {
   return (
     <svg
@@ -565,7 +646,10 @@ export default function CompareModels({
             }`}
           >
             <div className="flex shrink-0 items-center justify-between gap-4 border-b border-line px-4 py-3">
-              <h2 className="font-display text-sm text-mist-bright">Compare models</h2>
+              <div className="flex min-w-0 items-center gap-3">
+                <h2 className="font-display text-sm text-mist-bright">Compare models</h2>
+                <PreviewOnlyBadge />
+              </div>
               <div className="flex items-center gap-4">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-mist tabular-nums">
                   {panels.length} / {MAX_PANELS}
