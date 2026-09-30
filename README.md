@@ -35,7 +35,9 @@ Three pages:
   (HUD chrome off) embedded below it. **Open in dedicated window** serves
   the untouched `world.html`. Under that world, **Compare models**
   opens a grid that puts it side by side with the worlds from up to five
-  other tests, added one panel at a time.
+  other tests, added one panel at a time. The address follows the grid
+  (`/compare/<slug>+<slug>+…`, first slug is the anchor test), so a
+  comparison survives a refresh and can be shared.
 
 ## Adding a test
 

@@ -11,6 +11,7 @@ import {
   type ReactNode,
   type RefObject,
 } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "framer-motion";
 import { getProvider } from "@/lib/providers";
 import { isShortcut, useShortcutLabel } from "@/lib/shortcut";
@@ -43,7 +44,13 @@ export interface CompareEntry {
  * fewer in Safari) — past six the earliest contexts start getting dropped, so
  * the grid stops offering to add more rather than quietly killing a panel.
  */
-const MAX_PANELS = 6;
+export const MAX_PANELS = 6;
+
+/**
+ * The shareable address of a comparison: slugs joined by "+", first one the
+ * anchor test. One path segment reads as one comparison, not a folder tree.
+ */
+export const compareHref = (slugs: string[]) => `/compare/${slugs.join("+")}`;
 
 function GridIcon() {
   return (
@@ -544,20 +551,67 @@ function ModelPicker({
 export default function CompareModels({
   current,
   entries,
+  initialPanels,
+  standalone = false,
 }: {
   current: CompareEntry;
   entries: CompareEntry[];
+  /** Panels to start with (the comparison route seeds these from the URL). */
+  initialPanels?: CompareEntry[];
+  /** Rendered by /compare/...: open from the start, no opener button. */
+  standalone?: boolean;
 }) {
-  const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const [open, setOpen] = useState(standalone);
   const [picking, setPicking] = useState(false);
-  const [panels, setPanels] = useState<CompareEntry[]>([current]);
+  const [panels, setPanels] = useState<CompareEntry[]>(initialPanels ?? [current]);
   const gridRef = useRef<HTMLDivElement>(null);
   const shortcut = useShortcutLabel("K");
 
+  // The URL follows the dialog so a comparison can be refreshed and shared.
+  // Opening from a test page pushes /compare/..., adding or removing a panel
+  // rewrites it in place, and closing steps back to the page underneath.
+  const pushedRef = useRef(false);
+
   const close = useCallback(() => {
-    setOpen(false);
     setPicking(false);
-  }, []);
+    if (standalone) {
+      router.push(`/tests/${current.slug}`);
+      return;
+    }
+    setOpen(false);
+    if (pushedRef.current) {
+      pushedRef.current = false;
+      window.history.back();
+    }
+  }, [standalone, router, current.slug]);
+
+  const openDialog = () => {
+    window.history.pushState(null, "", compareHref(panels.map((p) => p.slug)));
+    pushedRef.current = true;
+    setOpen(true);
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    window.history.replaceState(
+      window.history.state,
+      "",
+      compareHref(panels.map((p) => p.slug)),
+    );
+  }, [open, panels]);
+
+  // Browser Back from an opened comparison closes it rather than leaving.
+  useEffect(() => {
+    if (standalone) return;
+    function onPop() {
+      pushedRef.current = false;
+      setOpen(false);
+      setPicking(false);
+    }
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [standalone]);
 
   const chosen = new Set(panels.map((panel) => panel.slug));
   const options = entries.filter((entry) => !chosen.has(entry.slug));
@@ -578,10 +632,8 @@ export default function CompareModels({
       }
       if (e.key !== "Escape") return;
       // The picker sits over the grid, so Escape backs out one layer at a time.
-      setPicking((wasPicking) => {
-        if (!wasPicking) setOpen(false);
-        return false;
-      });
+      if (picking) setPicking(false);
+      else close();
     }
     window.addEventListener("keydown", onKeyDown);
 
@@ -621,18 +673,20 @@ export default function CompareModels({
         }
       }
     };
-  }, [open, canAdd, panels]);
+  }, [open, canAdd, panels, picking, close]);
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="group inline-flex items-center gap-2 text-sm text-mist transition-colors hover:text-mist-bright"
-      >
-        <GridIcon />
-        <span className="underline-offset-2 group-hover:underline">Compare models</span>
-      </button>
+      {!standalone && (
+        <button
+          type="button"
+          onClick={openDialog}
+          className="group inline-flex items-center gap-2 text-sm text-mist transition-colors hover:text-mist-bright"
+        >
+          <GridIcon />
+          <span className="underline-offset-2 group-hover:underline">Compare models</span>
+        </button>
+      )}
 
       {open && (
         <div
