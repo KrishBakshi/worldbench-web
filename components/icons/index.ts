@@ -10,6 +10,7 @@ import DeepSeekIcon from "./deepseek";
 import MetaIcon from "./meta";
 import NvidiaIcon from "./nvidia";
 import NexIcon from "./nex";
+import XiaomiIcon from "./xiaomi";
 import OtherIcon from "./other";
 import AnthropicTextIcon from "./anthropic-text";
 import OpenAITextIcon from "./openai-text";
@@ -22,6 +23,7 @@ import DeepSeekTextIcon from "./deepseek-text";
 import MetaTextIcon from "./meta-text";
 import NvidiaTextIcon from "./nvidia-text";
 import NexTextIcon from "./nex-text";
+import XiaomiTextIcon from "./xiaomi-text";
 import type { WordmarkProps } from "./wordmark";
 
 export type { WordmarkProps };
@@ -32,7 +34,8 @@ export type { WordmarkProps };
  * model name is the company — Claude for Anthropic, Gemini for Google, Qwen for
  * Alibaba, Kimi for Moonshot AI. Meta's infinity mark stands in for Muse
  * Spark (no separate model logo in the set); NVIDIA's eye stands in for
- * Nemotron. `other` is the catch-all for unbranded listings, not a lab.
+ * Nemotron; Xiaomi MiMo is drawn as its avatar, the lockup cut out of a
+ * circle. `other` is the catch-all for unbranded listings, not a lab.
  *
  * Artwork is vendored from @lobehub/icons-static-svg (MIT) rather than taken as
  * a dependency: the React package `@lobehub/icons` peer-depends on antd and
@@ -51,6 +54,7 @@ export const PROVIDER_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement
   meta: MetaIcon,
   nvidia: NvidiaIcon,
   nex: NexIcon,
+  xiaomi: XiaomiIcon,
   other: OtherIcon,
 };
 
@@ -81,6 +85,7 @@ export const PROVIDER_WORDMARKS: Record<string, ComponentType<WordmarkProps>> = 
   meta: MetaTextIcon,
   nvidia: NvidiaTextIcon,
   nex: NexTextIcon,
+  xiaomi: XiaomiTextIcon,
 };
 
 /**

@@ -21,6 +21,7 @@ export const PROVIDERS: Record<string, Provider> = {
   meta: { name: "Meta" },
   nvidia: { name: "NVIDIA" },
   nex: { name: "Nex AGI" },
+  xiaomi: { name: "Xiaomi" },
   /** Catch-all for anonymous or unbranded listings — not a company name. */
   other: { name: "Other" },
 };
