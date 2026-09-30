@@ -13,6 +13,13 @@ function chipClass(pressed: boolean) {
   }`;
 }
 
+/** Bare arrow button: no box, just colour to say whether it is lit. */
+function moreClass(lit: boolean) {
+  return `inline-flex shrink-0 items-center px-1.5 py-1 transition-colors ${
+    lit ? "text-mist-bright" : "text-mist hover:text-mist-bright"
+  }`;
+}
+
 function Chevron({ open }: { open: boolean }) {
   return (
     <svg
@@ -186,7 +193,7 @@ export default function ProviderFilters({
           ref={moreMeasureRef}
           type="button"
           tabIndex={-1}
-          className={`${chipClass(false)} inline-flex items-center px-2`}
+          className={moreClass(false)}
         >
           <Chevron open={false} />
         </button>
@@ -194,13 +201,24 @@ export default function ProviderFilters({
 
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
-          {/* Sized to its chips, not to the row: `flex-1` here would fill the
-              width and strand the chevron against the right edge, a gap as wide
-              as whatever the chips happen not to use. `min-w-0` with the
-              overflow clip keeps the shrink behaviour — if a chip is still on
-              this line when space runs out, it is cut rather than pushing the
-              chevron off the row. */}
-          <div className="flex min-w-0 flex-nowrap items-center gap-2 overflow-hidden">
+          {/* Fills the row so the chevron sits against the right edge. While
+              chips are folded away the row's trailing edge fades out (a mask,
+              so it works over any background), hinting there is more below the
+              arrow. `min-w-0` + clip keeps a chip that is still on this line
+              from pushing the chevron off the row. */}
+          <div
+            className="flex min-w-0 flex-1 flex-nowrap items-center gap-2 overflow-hidden"
+            style={
+              overflow.length > 0 && !open
+                ? {
+                    maskImage:
+                      "linear-gradient(to right, #000 calc(100% - 3rem), transparent)",
+                    WebkitMaskImage:
+                      "linear-gradient(to right, #000 calc(100% - 3rem), transparent)",
+                  }
+                : undefined
+            }
+          >
             {visible.map((provider) => (
               <Chip
                 key={provider.slug}
@@ -219,7 +237,7 @@ export default function ProviderFilters({
                 aria-expanded={open}
                 aria-pressed={overflowActive}
                 onClick={() => setOpen((v) => !v)}
-                className={`${chipClass(overflowActive || open)} inline-flex items-center px-2`}
+                className={moreClass(overflowActive || open)}
               >
                 <Chevron open={open} />
               </button>
