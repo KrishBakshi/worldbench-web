@@ -11,6 +11,8 @@ import ContributeCTA from "@/components/tests/ContributeCTA";
 import TestNotice from "@/components/tests/TestNotice";
 import SocialLinks from "@/components/about/SocialLinks";
 import BiomeGraph from "@/components/about/BiomeGraph";
+import ResultsPanel from "@/components/results/ResultsPanel";
+import { getResults } from "@/lib/results";
 
 export function generateStaticParams() {
   return getAllTests().map((test) => ({ slug: test.slug }));
@@ -45,6 +47,7 @@ export default async function TestDetailPage({
   const { slug } = await params;
   const test = getTestBySlug(slug);
   if (!test) notFound();
+  const results = getResults(slug);
 
   // Parsed as UTC so an ISO date like "2026-07-20" doesn't shift a day in
   // negative-offset timezones.
@@ -128,6 +131,8 @@ export default async function TestDetailPage({
           </>
         )}
       </div>
+
+      {results && <ResultsPanel results={results} />}
 
       {test.content && (
         <div className="prose mt-8 max-w-none text-sm">
