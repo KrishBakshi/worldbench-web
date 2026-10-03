@@ -11,6 +11,7 @@ const links = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/tests", label: "View Tests" },
+  { href: "/leaderboard", label: "Leaderboard" },
 ];
 
 export default function Header() {

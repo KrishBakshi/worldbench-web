@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 type NavLink = { href: string; label: string };
 
 /**
- * Mobile-only nav: on small screens the three header links don't fit alongside
+ * Mobile-only nav: on small screens the header links don't fit alongside
  * the wordmark, so they collapse into this dropdown beside the theme toggle.
  * Hidden at md+, where the inline nav shows instead.
  */

@@ -38,7 +38,8 @@ this file" language into the model-facing text.
   non-model entries like the hand-tuned reference. Use `other` for anonymous
   or unbranded listings — there is no company called Stealth.
 - `app/`: Next.js App Router pages: `/` (home, floating-island hero + recent
-  tests), `/about` (what worldbench is), `/tests` (grid of all tests),
+  tests), `/about` (what worldbench is), `/tests` (grid of all tests), `/leaderboard` (ranked bar plots of every
+  model's scores),
   `/tests/[slug]` (intro media + the live island preview embedded in an
   iframe; "open in dedicated window" serves the untouched `world.html`).
 - `components/`, `lib/tests.ts`, `lib/about.ts`: site code; the `lib/*.ts`
@@ -112,8 +113,8 @@ thing the grid exists to avoid.
   npm run dev` to run it.
 - Keep the home page minimal and sparse: no extra copy over the floating
   island animation beyond the header and "See Recent Tests".
-- The header has exactly three links: Home, About, and View Tests. Don't
-  add more without being asked.
+- The header has exactly four links: Home, About, View Tests, and
+  Leaderboard. Don't add more without being asked.
 - Prefix every commit subject with its kind: `Add:` for new files or
   features, `Update:` for changes to something that already works, `Fix:`
   for corrections, `Remove:` for deletions, `Refactor:` for behaviour-neutral
