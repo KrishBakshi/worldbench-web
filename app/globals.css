@@ -23,6 +23,12 @@
      accent is left to mean one thing: the best, or what you're looking at. */
   --color-data-muted: #3a3a3f;
   --color-data-mid: #5c5c63;
+  /* Heatmap value ink by score band (below 6, 6 to 8, 8 and up). Cells run
+     grey to accent, which lightens in dark mode and darkens in light mode,
+     so each mode flips to the other ink at its own point. */
+  --heat-ink-lo: #f0f0f2;
+  --heat-ink-mid: #060607;
+  --heat-ink-hi: #060607;
 
   /* One shade per scored test, all from the glow accent's own hue: a single
      teal ramp, strongest for the heaviest test and stepping back to the
@@ -48,6 +54,9 @@
   --color-line: #dbdbde;
   --color-data-muted: #c9c9ce;
   --color-data-mid: #a3a3aa;
+  --heat-ink-lo: #121214;
+  --heat-ink-mid: #121214;
+  --heat-ink-hi: #ffffff;
   --color-test-contents: #075a4d;
   --color-test-physics: #187363;
   --color-test-voxel: #308c7a;
