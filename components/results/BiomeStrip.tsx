@@ -9,6 +9,22 @@ const head = (id: string) => id.charAt(0).toUpperCase() + id.slice(1);
 /** Cell fill: the accent mixed into the page in proportion to the score. */
 const fill = (v: number) => `color-mix(in oklab, var(--color-glow) ${Math.round(v * 9)}%, var(--color-void-deep))`;
 
+/** The heatmap's colour key, 0 to 10. Exported so the block can set it on
+ *  its note line rather than spending a line of its own. */
+export function BiomeScale() {
+  return (
+    <span className="flex items-center gap-2 text-xs text-mist" aria-label="Colour scale, 0 to 10 points">
+      <span className="tabular-nums">0</span>
+      <span className="flex h-2.5 w-28 overflow-hidden rounded-sm">
+        {Array.from({ length: 11 }, (_, v) => (
+          <span key={v} className="h-full flex-1" style={{ background: fill(v) }} />
+        ))}
+      </span>
+      <span className="tabular-nums">10</span>
+    </span>
+  );
+}
+
 /** View 3: each biome's score out of 10 in the two large tests (contents and
  *  physics), one row per test, so weak regions stand out at a glance. Hovering
  *  a cell lights its whole column, so one biome reads across both tests. */
@@ -21,17 +37,6 @@ export default function BiomeStrip({
 }) {
   return (
     <ChartHover>
-      <div className="mb-4 flex items-center gap-2 text-xs text-mist">
-        <span>Points out of 10</span>
-        <span className="tabular-nums">0</span>
-        <span className="flex h-2.5 w-32 overflow-hidden rounded-sm">
-          {Array.from({ length: 11 }, (_, v) => (
-            <span key={v} className="h-full flex-1" style={{ background: fill(v) }} />
-          ))}
-        </span>
-        <span className="tabular-nums">10</span>
-      </div>
-
       <div className="overflow-x-auto">
         <table className="w-full min-w-[600px] table-fixed border-separate border-spacing-1 text-xs">
           <thead>

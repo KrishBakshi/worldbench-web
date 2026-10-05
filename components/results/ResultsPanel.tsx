@@ -1,13 +1,30 @@
 import type { ModelResults } from "@/lib/results";
 import ScoreProfile from "@/components/results/ScoreProfile";
-import BiomeStrip from "@/components/results/BiomeStrip";
+import BiomeStrip, { BiomeScale } from "@/components/results/BiomeStrip";
 import PlacementGraph from "@/components/results/PlacementGraph";
 
-function Block({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
+/** A titled card. `legend` shares the note's line, set to its right, so a
+ *  chart with a key doesn't spend a line on it. */
+function Block({
+  title,
+  note,
+  legend,
+  children,
+}: {
+  title: string;
+  note?: string;
+  legend?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
     <div className="rounded-lg border border-line p-4">
       <h3 className="text-sm text-mist-bright">{title}</h3>
-      {note && <p className="mt-0.5 text-xs text-mist">{note}</p>}
+      {(note || legend) && (
+        <div className="mt-0.5 flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5">
+          {note && <p className="text-xs text-mist">{note}</p>}
+          {legend}
+        </div>
+      )}
       <div className="mt-4">{children}</div>
     </div>
   );
@@ -39,7 +56,7 @@ export default function ResultsPanel({ results }: { results: ModelResults }) {
       </Block>
 
       {rows.length > 0 && b && (
-        <Block title="By biome" note="Points out of 10 per biome in the two largest tests.">
+        <Block title="By biome" note="Points out of 10 per biome in the two largest tests." legend={<BiomeScale />}>
           <BiomeStrip ids={b.ids} rows={rows} />
         </Block>
       )}
