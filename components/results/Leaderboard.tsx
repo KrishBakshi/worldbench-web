@@ -31,10 +31,10 @@ function columnFormat(board: Board) {
   ) as Record<string, (n: number) => string>;
 }
 
-/** The leader's fill, and the step back every other bar takes from it. */
+/** The leader is the only bar in the accent; every other bar is a neutral
+ *  grey, so green means "best" and nothing else. */
 const LEAD = "var(--color-glow)";
-const lighter = (color: string) => `color-mix(in oklab, ${color} 55%, transparent)`;
-const REST = lighter(LEAD);
+const REST = "var(--color-data-mid)";
 
 /** Slug -> title and provider, from the tests' own meta.mdx. */
 function getInfo(): Record<string, Info> {
