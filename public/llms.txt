@@ -45,11 +45,11 @@ and compare how different models interpreted the same instruction.
 Each links to a detail page with intro media and the live `world.html` embedded
 in an iframe; the raw output is served at `/tests/<slug>/world.html`.
 
-- [Claude Fable 5 (Anthropic)](/tests/fable)
+- [Claude Fable 5 (Anthropic)](/tests/claude-fable-5)
 - [GPT-5.6 Sol (OpenAI)](/tests/gpt-5-6-sol)
 - [Gemini 3.1 Pro (Google)](/tests/gemini-3-1-pro)
-- [Grok 4.5 Fast (xAI)](/tests/grok-4-5-fast)
-- [Qwen 3.8 Max Preview (Alibaba)](/tests/qwen-3-8-max-prev)
+- [Grok 4.5 (xAI)](/tests/grok-4-5)
+- [Qwen 3.8 Max (Alibaba)](/tests/qwen-3-8-max)
 - [Kimi K2.7 (Moonshot AI)](/tests/kimi-k-2-7)
 - [Kimi K3 (Moonshot AI)](/tests/kimi-k-3)
 - [GLM 5 Turbo (Z.ai)](/tests/glm-5-turbo)
