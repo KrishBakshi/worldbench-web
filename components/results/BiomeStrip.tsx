@@ -21,17 +21,6 @@ export default function BiomeStrip({
 }) {
   return (
     <ChartHover>
-      <div className="mb-4 flex items-center gap-2 text-xs text-mist">
-        <span>Points out of 10</span>
-        <span className="tabular-nums">0</span>
-        <span className="flex h-2.5 w-32 overflow-hidden rounded-sm">
-          {Array.from({ length: 11 }, (_, v) => (
-            <span key={v} className="h-full flex-1" style={{ background: fill(v) }} />
-          ))}
-        </span>
-        <span className="tabular-nums">10</span>
-      </div>
-
       <div className="overflow-x-auto">
         <table className="w-full min-w-[600px] table-fixed border-separate border-spacing-1 text-xs">
           <thead>
@@ -80,6 +69,20 @@ export default function BiomeStrip({
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Colour key. Every cell prints its value, so the key is reference
+          rather than a way in: it sits after the grid, flush with its right
+          edge (pr-1 matches the table's border spacing). The block's note
+          already names the units. */}
+      <div className="mt-3 flex items-center justify-end gap-2 pr-1 text-xs text-mist" aria-label="Colour scale, 0 to 10 points">
+        <span className="tabular-nums">0</span>
+        <span className="flex h-2.5 w-32 overflow-hidden rounded-sm">
+          {Array.from({ length: 11 }, (_, v) => (
+            <span key={v} className="h-full flex-1" style={{ background: fill(v) }} />
+          ))}
+        </span>
+        <span className="tabular-nums">10</span>
       </div>
     </ChartHover>
   );
