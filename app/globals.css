@@ -329,3 +329,30 @@ body {
     animation: none;
   }
 }
+
+/* Chart hover (components/results/ChartHover.tsx). Marks outside the hovered
+   group fade back so the hovered test, model or biome reads across the whole
+   chart; !important because some marks carry an inline opacity of their own. */
+[data-groups] {
+  transition: opacity 150ms ease;
+}
+
+[data-groups][data-dim] {
+  opacity: 0.18 !important;
+}
+
+[data-tip] {
+  cursor: default;
+  outline: none;
+}
+
+[data-tip]:focus-visible {
+  outline: 1px solid var(--color-glow);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-groups] {
+    transition: none;
+  }
+}
