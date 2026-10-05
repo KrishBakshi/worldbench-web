@@ -114,7 +114,7 @@ function Legend({ items }: { items: { label: string; color: string; hover?: stri
 
 /** Tooltip rows for a model's per-test scores, heaviest test first. */
 const testRows = (m: Model, tests: Test[], f: ReturnType<typeof columnFormat>): TipRow[] =>
-  tests.map((t) => [t.name, m.tests[t.id] == null ? "–" : `${f[t.id](m.tests[t.id])} / ${t.max}`, testColor(t.id)]);
+  tests.map((t) => [t.name, m.tests[t.id] == null ? "–" : `${f[t.id](m.tests[t.id])} / ${t.max}`]);
 
 /** 2. Every model ranked by total. Bars start at zero and run to the full
  *  280, so lengths compare honestly; the leader is the one bar at full accent. */
@@ -232,10 +232,7 @@ function PerTest({
           return (
             <div key={t.id} className="rounded-lg border border-line p-4">
               <div className="flex items-baseline justify-between gap-3">
-                <h3 className="flex items-center gap-2 text-sm text-mist-bright">
-                  <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: testColor(t.id) }} />
-                  {t.name}
-                </h3>
+                <h3 className="text-sm text-mist-bright">{t.name}</h3>
                 <span className="shrink-0 text-xs tabular-nums text-mist">
                   out of {t.max} · {Math.round((100 * t.max) / total)}% of total
                 </span>
@@ -347,7 +344,6 @@ function Table({
             <th className="px-3 py-2.5 text-right font-normal">Total</th>
             {tests.map((t) => (
               <th key={t.id} className="px-2 py-2.5 text-right font-normal" title={`${t.name}, out of ${t.max}`}>
-                <span className="mr-1.5 inline-block h-2 w-2 rounded-sm" style={{ background: testColor(t.id) }} />
                 {t.short} <span className="text-mist/70">/{t.max}</span>
               </th>
             ))}
