@@ -18,17 +18,19 @@
   --color-glow: #7fd6c2;
   --color-line: #232325;
 
-  /* One colour per scored test, drawn from the island itself: foliage for
-     micro-contents, water for physics, berry for the voxel build, sand for
-     placement, twilight for cycles. Used wherever the tests are told apart
-     (stacked scores, score profile). Validated as a set for colour-blind and
-     normal-vision separation in each mode, and kept clear of the placement
-     graph's fail red, which means "broken" and nothing else. */
-  --color-test-contents: #4fa66a;
-  --color-test-physics: #4a8fd2;
-  --color-test-voxel: #9d3576;
-  --color-test-placement: #bc8626;
-  --color-test-cycles: #8b77d4;
+  /* One shade per scored test, all from the glow accent's own hue: a single
+     teal ramp, strongest for the heaviest test and stepping back to the
+     lightest. A chart tells its tests apart by shade, never by a second hue,
+     so every plot stays one colour and sits quietly in the monochrome
+     chrome. Solid steps rather than opacity, so they don't wash out; spaced
+     evenly in lightness (checked: monotone, >= 0.06 apart, the faintest
+     still >= 2:1 on the page). Legends, 2px gaps, tooltips and the table
+     carry the identity alongside. */
+  --color-test-contents: #83e7d1;
+  --color-test-physics: #67c5b1;
+  --color-test-voxel: #51a392;
+  --color-test-placement: #3c8374;
+  --color-test-cycles: #2c675b;
 }
 
 :root[data-theme="day"] {
@@ -38,11 +40,11 @@
   --color-mist-bright: #121214;
   --color-glow: #2f8f78;
   --color-line: #dbdbde;
-  --color-test-contents: #2f8a4c;
-  --color-test-physics: #2a74c4;
-  --color-test-voxel: #a03569;
-  --color-test-placement: #b07d10;
-  --color-test-cycles: #6a55c0;
+  --color-test-contents: #075a4d;
+  --color-test-physics: #187363;
+  --color-test-voxel: #308c7a;
+  --color-test-placement: #50a291;
+  --color-test-cycles: #70b6a6;
 }
 
 html,

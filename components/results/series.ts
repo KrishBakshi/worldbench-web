@@ -1,4 +1,4 @@
-/** Each scored test's colour, keyed by test id so a test keeps its colour
+/** Each scored test's shade on the teal ramp, keyed by test id so a test keeps its colour
  *  wherever it appears, whatever order a chart lists it in. Tokens live in
  *  app/globals.css with their light and dark steps. */
 const TEST_COLOR: Record<string, string> = {

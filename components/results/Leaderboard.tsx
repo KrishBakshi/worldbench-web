@@ -218,8 +218,8 @@ function PerTest({
     <ChartHover>
       <Legend
         items={[
-          { label: "Top score in that test", color: "var(--color-mist)" },
-          { label: "Other models", color: lighter("var(--color-mist)") },
+          { label: "Top score in that test", color: LEAD },
+          { label: "Other models", color: REST },
         ]}
       />
       <div className="grid gap-4 md:grid-cols-2">
@@ -263,7 +263,7 @@ function PerTest({
                       <div className="h-1.5">
                         <div
                           className="h-full rounded-r-full"
-                          style={{ width: `${share(r.score, t.max)}%`, background: r.score === best ? testColor(t.id) : lighter(testColor(t.id)) }}
+                          style={{ width: `${share(r.score, t.max)}%`, background: r.score === best ? LEAD : REST }}
                         />
                       </div>
                       <span className="text-right tabular-nums text-mist-bright">{f[t.id](r.score)}</span>
