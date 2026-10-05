@@ -31,22 +31,18 @@ export default function ScoreProfile({ tests }: { tests: TestScore[] }) {
 
   return (
     <ChartHover>
-      <ul className="mb-4 flex flex-wrap gap-x-5 gap-y-1.5 text-xs text-mist">
-        <li className="flex items-center gap-1.5">
-          <span className="inline-block h-2.5 w-2.5 rounded-sm border-2" style={{ borderColor: "var(--color-glow)", background: "color-mix(in oklab, var(--color-glow) 18%, transparent)" }} />
-          This model&rsquo;s share of each test&rsquo;s maximum
-        </li>
-        <li className="flex items-center gap-1.5">
-          <span className="inline-block h-0 w-4 border-t border-mist" />
-          Rings at 50% and 100%
-        </li>
-      </ul>
-
       <div className="grid gap-6 sm:grid-cols-[280px_1fr] sm:items-center">
         <svg viewBox="-34 -6 328 272" className="mx-auto h-auto w-full max-w-[280px] overflow-visible" role="img"
           aria-label={`Score profile: ${tests.map((t) => `${t.name} ${Math.round(100 * frac(t))}%`).join(", ")}`}>
           {[0.5, 1].map((f) => (
             <polygon key={f} points={ring(f)} fill="none" stroke="var(--color-line)" strokeWidth={1} />
+          ))}
+          {/* The rings label themselves, just left of the top axis, so the
+              scale reads without a legend. */}
+          {[0.5, 1].map((f) => (
+            <text key={f} x={C - 6} y={C - R * f + 3} textAnchor="end" fontSize="9" fill="var(--color-mist)">
+              {f * 100}%
+            </text>
           ))}
           {tests.map((t, i) => {
             const [x, y] = at(i, R);
