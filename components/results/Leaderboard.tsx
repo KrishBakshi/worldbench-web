@@ -4,6 +4,8 @@ import { getLeaderboard } from "@/lib/results";
 import { getAllTests } from "@/lib/tests";
 import { getProvider } from "@/lib/providers";
 import { getProviderIcon } from "@/components/icons";
+import ChartHover from "@/components/results/ChartHover";
+import { member, tip, type TipRow } from "@/components/results/tip";
 
 type Board = NonNullable<ReturnType<typeof getLeaderboard>>;
 type Test = Board["tests"][number];
@@ -15,7 +17,18 @@ interface Info {
 }
 
 const share = (score: number, max: number) => (max ? Math.min(100, (100 * score) / max) : 0);
-const fmt = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1));
+
+/** One format per test column: a test scored in whole points stays whole, and
+ *  one with any fractional score shows every value to one place, so a column
+ *  never mixes "40" and "37.3". */
+function columnFormat(board: Board) {
+  return Object.fromEntries(
+    board.tests.map((t) => {
+      const dp = board.models.some((m) => m.tests[t.id] != null && !Number.isInteger(m.tests[t.id])) ? 1 : 0;
+      return [t.id, (n: number) => n.toFixed(dp)];
+    }),
+  ) as Record<string, (n: number) => string>;
+}
 
 /** The leader's fill, and the step back every other bar takes from it. */
 const LEAD = "var(--color-glow)";
@@ -71,7 +84,7 @@ function Podium({ board, info }: { board: Board; info: Record<string, Info> }) {
               <span className="mt-4 flex items-baseline gap-2">
                 <span className="font-display text-3xl tabular-nums text-mist-bright">{share(m.total, m.max).toFixed(1)}%</span>
                 <span className="text-xs tabular-nums text-mist">
-                  {fmt(m.total)} / {m.max} pts
+                  {m.total.toFixed(1)} / {m.max} pts
                 </span>
               </span>
             </Link>
@@ -81,6 +94,25 @@ function Podium({ board, info }: { board: Board; info: Record<string, Info> }) {
     </ol>
   );
 }
+
+/** A row of legend keys. Keys with a `hover` join the chart's highlight, so
+ *  pointing at one lights up its series. */
+function Legend({ items }: { items: { label: string; color: string; hover?: string }[] }) {
+  return (
+    <ul className="mb-4 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-mist">
+      {items.map((it) => (
+        <li key={it.label} className="flex items-center gap-1.5" {...(it.hover ? tip({ key: it.hover }) : {})}>
+          <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: it.color }} />
+          {it.label}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Tooltip rows for a model's per-test scores, heaviest test first. */
+const testRows = (m: Model, tests: Test[], f: ReturnType<typeof columnFormat>): TipRow[] =>
+  tests.map((t) => [t.name, m.tests[t.id] == null ? "–" : `${f[t.id](m.tests[t.id])} / ${t.max}`]);
 
 /** 2. Every model ranked by total. Bars start at zero and run to the full
  *  280, so lengths compare honestly; the leader is the one bar at full accent. */
@@ -93,29 +125,48 @@ function Rankings({
   info: Record<string, Info>;
   leaders: ReturnType<typeof getLeaders>;
 }) {
+  const f = columnFormat(board);
   const tests = byWeight(board.tests);
   const cols = "grid-cols-[1.5rem_minmax(0,9rem)_1fr_3.5rem] sm:grid-cols-[1.75rem_minmax(0,13rem)_1fr_5.5rem]";
   return (
-    <div className="rounded-lg border border-line p-4 sm:p-5">
+    <ChartHover className="rounded-lg border border-line p-4 sm:p-5">
+      <Legend
+        items={[
+          { label: "Top score", color: LEAD },
+          { label: "Other models", color: REST },
+        ]}
+      />
       <ol className="space-y-2.5">
         {board.models.map((m, i) => {
           const { title, provider } = info[m.slug] ?? { title: m.slug, provider: null };
           const tops = tests.filter((t) => leaders[t.id]?.slugs.includes(m.slug)).map((t) => t.short);
           return (
-            <li key={m.slug} className={`grid items-center gap-x-3 text-sm ${cols}`}>
+            <li key={m.slug} className={`grid items-center gap-x-3 text-sm ${cols}`} {...member(m.slug)}>
               <span className="tabular-nums text-mist">{i + 1}</span>
               <Link href={`/tests/${m.slug}`} className="group flex min-w-0 items-center gap-2">
                 <ModelMark provider={provider} className="hidden h-3.5 w-3.5 shrink-0 text-mist sm:block" />
                 <span className="min-w-0">
                   <span className="block truncate text-mist-bright group-hover:text-glow">{title}</span>
                   {tops.length > 0 && (
-                    <span className="block truncate text-[10px] text-mist" title={`Top score in ${tops.join(", ")}`}>
+                    <span className="block truncate text-[10px] text-mist">
                       {tops.length > 2 ? `Top score in ${tops.length} of ${tests.length} tests` : `Top in ${tops.join(", ")}`}
                     </span>
                   )}
                 </span>
               </Link>
-              <div className="relative h-5" title={`${title}: ${fmt(m.total)} / ${m.max}`}>
+              <div
+                className="relative h-5"
+                {...tip({
+                  title,
+                  key: m.slug,
+                  rows: [
+                    ["Rank", `#${i + 1} of ${board.models.length}`],
+                    ["Total", `${m.total.toFixed(1)} / ${m.max}`],
+                    ["Share", `${share(m.total, m.max).toFixed(1)}%`],
+                    ...testRows(m, tests, f),
+                  ],
+                })}
+              >
                 {[25, 50, 75].map((g) => (
                   <span key={g} aria-hidden="true" className="absolute inset-y-[-5px] border-l border-line/60" style={{ left: `${g}%` }} />
                 ))}
@@ -123,7 +174,7 @@ function Rankings({
               </div>
               <span className="text-right tabular-nums">
                 <span className="text-mist-bright">{share(m.total, m.max).toFixed(1)}%</span>
-                <span className="hidden text-xs text-mist sm:inline"> · {fmt(m.total)}</span>
+                <span className="hidden text-xs text-mist sm:inline"> · {m.total.toFixed(1)}</span>
                 {!m.complete && <span className="block text-[10px] text-mist">partial</span>}
               </span>
             </li>
@@ -142,12 +193,14 @@ function Rankings({
         </div>
         <span />
       </div>
-    </div>
+    </ChartHover>
   );
 }
 
 /** 3. One small ranked chart per test, heaviest first, so a model that is
- *  strong in one place and weaker in another shows up where totals hide it. */
+ *  strong in one place and weaker in another shows up where totals hide it.
+ *  The cards share one hover layer: pointing at a model lights it up in all
+ *  five at once. */
 function PerTest({
   board,
   info,
@@ -157,67 +210,87 @@ function PerTest({
   info: Record<string, Info>;
   leaders: ReturnType<typeof getLeaders>;
 }) {
+  const f = columnFormat(board);
   const total = board.tests.reduce((s, t) => s + t.max, 0);
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      {byWeight(board.tests).map((t) => {
-        const rows = board.models
-          .filter((m) => m.tests[t.id] != null)
-          .map((m) => ({ slug: m.slug, score: m.tests[t.id] }))
-          .sort((a, b) => b.score - a.score);
-        const best = leaders[t.id]?.best;
-        return (
-          <div key={t.id} className="rounded-lg border border-line p-4">
-            <div className="flex items-baseline justify-between gap-3">
-              <h3 className="text-sm text-mist-bright">{t.name}</h3>
-              <span className="shrink-0 text-xs tabular-nums text-mist">
-                out of {t.max} · {Math.round((100 * t.max) / total)}% of total
-              </span>
+    <ChartHover>
+      <Legend
+        items={[
+          { label: "Top score in that test", color: LEAD },
+          { label: "Other models", color: REST },
+        ]}
+      />
+      <div className="grid gap-4 md:grid-cols-2">
+        {byWeight(board.tests).map((t) => {
+          const rows = board.models
+            .filter((m) => m.tests[t.id] != null)
+            .map((m) => ({ slug: m.slug, score: m.tests[t.id] }))
+            .sort((a, b) => b.score - a.score);
+          const best = leaders[t.id]?.best;
+          return (
+            <div key={t.id} className="rounded-lg border border-line p-4">
+              <div className="flex items-baseline justify-between gap-3">
+                <h3 className="text-sm text-mist-bright">{t.name}</h3>
+                <span className="shrink-0 text-xs tabular-nums text-mist">
+                  out of {t.max} · {Math.round((100 * t.max) / total)}% of total
+                </span>
+              </div>
+              <ul className="mt-3 space-y-1.5">
+                {rows.map((r) => {
+                  const rank = rows.findIndex((x) => x.score === r.score) + 1;
+                  return (
+                    <li
+                      key={r.slug}
+                      className="grid grid-cols-[minmax(0,7.5rem)_1fr_2.75rem] items-center gap-x-2 text-xs"
+                      {...tip({
+                        title: info[r.slug]?.title ?? r.slug,
+                        key: r.slug,
+                        rows: [
+                          [t.name, `${f[t.id](r.score)} / ${t.max}`],
+                          ["Share", `${share(r.score, t.max).toFixed(1)}%`],
+                          ["Rank in test", `#${rank} of ${rows.length}`],
+                        ],
+                      })}
+                    >
+                      <Link href={`/tests/${r.slug}`} className="truncate text-mist hover:text-mist-bright">
+                        {info[r.slug]?.title ?? r.slug}
+                      </Link>
+                      <div className="h-1.5">
+                        <div
+                          className="h-full rounded-r-full"
+                          style={{ width: `${share(r.score, t.max)}%`, background: r.score === best ? LEAD : REST }}
+                        />
+                      </div>
+                      <span className="text-right tabular-nums text-mist-bright">{f[t.id](r.score)}</span>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
-            <ul className="mt-3 space-y-1.5">
-              {rows.map((r) => (
-                <li key={r.slug} className="grid grid-cols-[minmax(0,7.5rem)_1fr_2.75rem] items-center gap-x-2 text-xs">
-                  <Link href={`/tests/${r.slug}`} className="truncate text-mist hover:text-mist-bright">
-                    {info[r.slug]?.title ?? r.slug}
-                  </Link>
-                  <div className="h-1.5" title={`${t.name}: ${r.score} / ${t.max}`}>
-                    <div
-                      className="h-full rounded-r-full"
-                      style={{ width: `${share(r.score, t.max)}%`, background: r.score === best ? LEAD : REST }}
-                    />
-                  </div>
-                  <span className="text-right tabular-nums text-mist-bright">{fmt(r.score)}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        );
-      })}
-    </div>
+          );
+        })}
+      </div>
+    </ChartHover>
   );
 }
 
-/** Step the accent down per test so stacked segments read as distinct bands. */
-const SHADES = [1, 0.78, 0.6, 0.45, 0.32];
+/** One fill per test, stepped down from the accent, heaviest test first. */
+const SERIES = [100, 78, 60, 45, 32].map((p) => `color-mix(in oklab, var(--color-glow) ${p}%, transparent)`);
 
 /** 4. Each total split into its tests, heaviest first: a bar's length is its
- *  total and each band shows where those points came from. */
+ *  total and each band shows where those points came from. Hovering a band or
+ *  a legend key lights that test up across every model. */
 function Composition({ board, info }: { board: Board; info: Record<string, Info> }) {
+  const f = columnFormat(board);
   const max = board.models[0]?.max ?? 1;
   const tests = byWeight(board.tests);
+  const color = (j: number) => SERIES[j % SERIES.length];
   return (
-    <div className="rounded-lg border border-line p-4 sm:p-5">
-      <ul className="mb-5 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-mist">
-        {tests.map((t, i) => (
-          <li key={t.id} className="flex items-center gap-1.5">
-            <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: LEAD, opacity: SHADES[i % SHADES.length] }} />
-            {t.name}
-          </li>
-        ))}
-      </ul>
+    <ChartHover className="rounded-lg border border-line p-4 sm:p-5">
+      <Legend items={tests.map((t, j) => ({ label: `${t.name} (${t.max})`, color: color(j), hover: t.id }))} />
       <ol className="space-y-2">
         {board.models.map((m) => (
-          <li key={m.slug} className="grid grid-cols-[minmax(0,9rem)_1fr] items-center gap-x-3 text-xs sm:grid-cols-[minmax(0,13rem)_1fr]">
+          <li key={m.slug} className="grid grid-cols-[minmax(0,9rem)_1fr_3rem] items-center gap-x-3 text-xs sm:grid-cols-[minmax(0,13rem)_1fr_3.5rem]">
             <Link href={`/tests/${m.slug}`} className="truncate text-mist hover:text-mist-bright">
               {info[m.slug]?.title ?? m.slug}
             </Link>
@@ -228,16 +301,25 @@ function Composition({ board, info }: { board: Board; info: Record<string, Info>
                   <div
                     key={t.id}
                     className="h-full last:rounded-r-sm"
-                    style={{ width: `${share(v, max)}%`, background: LEAD, opacity: SHADES[j % SHADES.length] }}
-                    title={`${t.name}: ${fmt(v)} / ${t.max}`}
+                    style={{ width: `${share(v, max)}%`, background: color(j) }}
+                    {...tip({
+                      title: info[m.slug]?.title ?? m.slug,
+                      key: t.id,
+                      rows: [
+                        [t.name, `${f[t.id](v)} / ${t.max}`, color(j)],
+                        ["Of this model's total", `${share(v, m.total).toFixed(0)}%`],
+                        ["Model total", `${m.total.toFixed(1)} / ${m.max}`],
+                      ],
+                    })}
                   />
                 );
               })}
             </div>
+            <span className="text-right tabular-nums text-mist-bright">{m.total.toFixed(1)}</span>
           </li>
         ))}
       </ol>
-    </div>
+    </ChartHover>
   );
 }
 
@@ -252,6 +334,7 @@ function Table({
   info: Record<string, Info>;
   leaders: ReturnType<typeof getLeaders>;
 }) {
+  const f = columnFormat(board);
   const tests = byWeight(board.tests);
   return (
     <div className="overflow-x-auto rounded-lg border border-line">
@@ -270,7 +353,7 @@ function Table({
         </thead>
         <tbody>
           {board.models.map((m, i) => (
-            <tr key={m.slug} className="border-b border-line last:border-0">
+            <tr key={m.slug} className="border-b border-line transition-colors last:border-0 hover:bg-line/40">
               <td className="px-4 py-2 tabular-nums text-mist">{i + 1}</td>
               <td className="px-2 py-2">
                 <Link href={`/tests/${m.slug}`} className="text-mist-bright hover:text-glow">
@@ -278,7 +361,7 @@ function Table({
                 </Link>
               </td>
               <td className="px-3 py-2 text-right tabular-nums text-mist-bright">
-                {fmt(m.total)}
+                {m.total.toFixed(1)}
                 <span className="text-mist"> / {m.max}</span>
               </td>
               {tests.map((t) => {
@@ -286,7 +369,7 @@ function Table({
                 const top = v != null && v === leaders[t.id]?.best;
                 return (
                   <td key={t.id} className={`px-2 py-2 text-right tabular-nums ${top ? "text-glow" : "text-mist"}`}>
-                    {v == null ? "–" : fmt(v)}
+                    {v == null ? "–" : f[t.id](v)}
                   </td>
                 );
               })}
