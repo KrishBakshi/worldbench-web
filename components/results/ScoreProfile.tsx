@@ -1,6 +1,7 @@
 import type { TestScore } from "@/lib/results";
 import ChartHover from "@/components/results/ChartHover";
 import { member, tip } from "@/components/results/tip";
+import { testColor } from "@/components/results/series";
 
 /** Views 1 and 2: the score profile as a polygon (each axis one test as a
  *  share of its maximum) beside the earned/max bars for the same tests. One
@@ -22,7 +23,7 @@ export default function ScoreProfile({ tests }: { tests: TestScore[] }) {
       key: t.id,
       rows: t.scored
         ? [
-            ["Score", `${t.score} / ${t.max}`],
+            ["Score", `${t.score} / ${t.max}`, testColor(t.id)],
             ["Share of max", `${Math.round(100 * frac(t))}%`],
           ]
         : [["Score", "not scored"]],
@@ -58,7 +59,7 @@ export default function ScoreProfile({ tests }: { tests: TestScore[] }) {
               <g key={t.id} {...tipFor(t)}>
                 {/* Wider invisible target than the visible dot. */}
                 <circle cx={x} cy={y} r={12} fill="transparent" />
-                <circle cx={x} cy={y} r={4} fill="var(--color-glow)" stroke="var(--color-void)" strokeWidth={2} />
+                <circle cx={x} cy={y} r={4.5} fill={testColor(t.id)} stroke="var(--color-void)" strokeWidth={2} />
               </g>
             );
           })}
@@ -76,13 +77,16 @@ export default function ScoreProfile({ tests }: { tests: TestScore[] }) {
           {tests.map((t) => (
             <li key={t.id} {...tipFor(t)}>
               <div className="flex items-baseline justify-between text-sm">
-                <span className="text-mist-bright">{t.name}</span>
+                <span className="flex items-center gap-2 text-mist-bright">
+                  <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: testColor(t.id) }} />
+                  {t.name}
+                </span>
                 <span className="tabular-nums text-mist">
                   {t.scored ? `${t.score} / ${t.max}` : "not scored"}
                 </span>
               </div>
               <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-line">
-                <div className="h-full rounded-full" style={{ width: `${100 * frac(t)}%`, background: "var(--color-glow)" }} />
+                <div className="h-full rounded-full" style={{ width: `${100 * frac(t)}%`, background: testColor(t.id) }} />
               </div>
             </li>
           ))}

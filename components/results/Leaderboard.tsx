@@ -6,6 +6,7 @@ import { getProvider } from "@/lib/providers";
 import { getProviderIcon } from "@/components/icons";
 import ChartHover from "@/components/results/ChartHover";
 import { member, tip, type TipRow } from "@/components/results/tip";
+import { testColor } from "@/components/results/series";
 
 type Board = NonNullable<ReturnType<typeof getLeaderboard>>;
 type Test = Board["tests"][number];
@@ -32,7 +33,8 @@ function columnFormat(board: Board) {
 
 /** The leader's fill, and the step back every other bar takes from it. */
 const LEAD = "var(--color-glow)";
-const REST = "color-mix(in oklab, var(--color-glow) 55%, transparent)";
+const lighter = (color: string) => `color-mix(in oklab, ${color} 55%, transparent)`;
+const REST = lighter(LEAD);
 
 /** Slug -> title and provider, from the tests' own meta.mdx. */
 function getInfo(): Record<string, Info> {
@@ -112,7 +114,7 @@ function Legend({ items }: { items: { label: string; color: string; hover?: stri
 
 /** Tooltip rows for a model's per-test scores, heaviest test first. */
 const testRows = (m: Model, tests: Test[], f: ReturnType<typeof columnFormat>): TipRow[] =>
-  tests.map((t) => [t.name, m.tests[t.id] == null ? "–" : `${f[t.id](m.tests[t.id])} / ${t.max}`]);
+  tests.map((t) => [t.name, m.tests[t.id] == null ? "–" : `${f[t.id](m.tests[t.id])} / ${t.max}`, testColor(t.id)]);
 
 /** 2. Every model ranked by total. Bars start at zero and run to the full
  *  280, so lengths compare honestly; the leader is the one bar at full accent. */
@@ -216,8 +218,8 @@ function PerTest({
     <ChartHover>
       <Legend
         items={[
-          { label: "Top score in that test", color: LEAD },
-          { label: "Other models", color: REST },
+          { label: "Top score in that test", color: "var(--color-mist)" },
+          { label: "Other models", color: lighter("var(--color-mist)") },
         ]}
       />
       <div className="grid gap-4 md:grid-cols-2">
@@ -230,7 +232,10 @@ function PerTest({
           return (
             <div key={t.id} className="rounded-lg border border-line p-4">
               <div className="flex items-baseline justify-between gap-3">
-                <h3 className="text-sm text-mist-bright">{t.name}</h3>
+                <h3 className="flex items-center gap-2 text-sm text-mist-bright">
+                  <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: testColor(t.id) }} />
+                  {t.name}
+                </h3>
                 <span className="shrink-0 text-xs tabular-nums text-mist">
                   out of {t.max} · {Math.round((100 * t.max) / total)}% of total
                 </span>
@@ -258,7 +263,7 @@ function PerTest({
                       <div className="h-1.5">
                         <div
                           className="h-full rounded-r-full"
-                          style={{ width: `${share(r.score, t.max)}%`, background: r.score === best ? LEAD : REST }}
+                          style={{ width: `${share(r.score, t.max)}%`, background: r.score === best ? testColor(t.id) : lighter(testColor(t.id)) }}
                         />
                       </div>
                       <span className="text-right tabular-nums text-mist-bright">{f[t.id](r.score)}</span>
@@ -274,9 +279,6 @@ function PerTest({
   );
 }
 
-/** One fill per test, stepped down from the accent, heaviest test first. */
-const SERIES = [100, 78, 60, 45, 32].map((p) => `color-mix(in oklab, var(--color-glow) ${p}%, transparent)`);
-
 /** 4. Each total split into its tests, heaviest first: a bar's length is its
  *  total and each band shows where those points came from. Hovering a band or
  *  a legend key lights that test up across every model. */
@@ -284,29 +286,28 @@ function Composition({ board, info }: { board: Board; info: Record<string, Info>
   const f = columnFormat(board);
   const max = board.models[0]?.max ?? 1;
   const tests = byWeight(board.tests);
-  const color = (j: number) => SERIES[j % SERIES.length];
   return (
     <ChartHover className="rounded-lg border border-line p-4 sm:p-5">
-      <Legend items={tests.map((t, j) => ({ label: `${t.name} (${t.max})`, color: color(j), hover: t.id }))} />
+      <Legend items={tests.map((t) => ({ label: `${t.name} (${t.max})`, color: testColor(t.id), hover: t.id }))} />
       <ol className="space-y-2">
         {board.models.map((m) => (
           <li key={m.slug} className="grid grid-cols-[minmax(0,9rem)_1fr_3rem] items-center gap-x-3 text-xs sm:grid-cols-[minmax(0,13rem)_1fr_3.5rem]">
             <Link href={`/tests/${m.slug}`} className="truncate text-mist hover:text-mist-bright">
               {info[m.slug]?.title ?? m.slug}
             </Link>
-            <div className="flex h-4 gap-px">
-              {tests.map((t, j) => {
+            <div className="flex h-4 gap-0.5">
+              {tests.map((t) => {
                 const v = m.tests[t.id] ?? 0;
                 return (
                   <div
                     key={t.id}
                     className="h-full last:rounded-r-sm"
-                    style={{ width: `${share(v, max)}%`, background: color(j) }}
+                    style={{ width: `${share(v, max)}%`, background: testColor(t.id) }}
                     {...tip({
                       title: info[m.slug]?.title ?? m.slug,
                       key: t.id,
                       rows: [
-                        [t.name, `${f[t.id](v)} / ${t.max}`, color(j)],
+                        [t.name, `${f[t.id](v)} / ${t.max}`, testColor(t.id)],
                         ["Of this model's total", `${share(v, m.total).toFixed(0)}%`],
                         ["Model total", `${m.total.toFixed(1)} / ${m.max}`],
                       ],
@@ -346,6 +347,7 @@ function Table({
             <th className="px-3 py-2.5 text-right font-normal">Total</th>
             {tests.map((t) => (
               <th key={t.id} className="px-2 py-2.5 text-right font-normal" title={`${t.name}, out of ${t.max}`}>
+                <span className="mr-1.5 inline-block h-2 w-2 rounded-sm" style={{ background: testColor(t.id) }} />
                 {t.short} <span className="text-mist/70">/{t.max}</span>
               </th>
             ))}
@@ -368,7 +370,7 @@ function Table({
                 const v = m.tests[t.id];
                 const top = v != null && v === leaders[t.id]?.best;
                 return (
-                  <td key={t.id} className={`px-2 py-2 text-right tabular-nums ${top ? "text-glow" : "text-mist"}`}>
+                  <td key={t.id} className={`px-2 py-2 text-right tabular-nums ${top ? "font-semibold text-mist-bright" : "text-mist"}`}>
                     {v == null ? "–" : f[t.id](v)}
                   </td>
                 );
@@ -411,7 +413,7 @@ export default function Leaderboard() {
       <Section title="Where the points come from" note="Each model's total, split into its tests.">
         <Composition board={board} info={info} />
       </Section>
-      <Section title="All scores" note="Highlighted values are the top score in their column.">
+      <Section title="All scores" note="Bold values are the top score in their column.">
         <Table board={board} info={info} leaders={leaders} />
       </Section>
     </>

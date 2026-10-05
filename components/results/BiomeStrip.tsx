@@ -1,6 +1,7 @@
 import { BIOME_NODES } from "@/lib/biomes";
 import ChartHover from "@/components/results/ChartHover";
 import { tip } from "@/components/results/tip";
+import { testColor } from "@/components/results/series";
 
 const LABEL = Object.fromEntries(BIOME_NODES.map((n) => [n.id, n.label]));
 /** Column heads: the biome id ("mountains"), capitalised; the full label is the tooltip. */
@@ -16,7 +17,7 @@ export default function BiomeStrip({
   rows,
 }: {
   ids: string[];
-  rows: { name: string; values: number[] }[];
+  rows: { id: string; name: string; values: number[] }[];
 }) {
   return (
     <ChartHover>
@@ -35,7 +36,7 @@ export default function BiomeStrip({
         <table className="w-full min-w-[600px] table-fixed border-separate border-spacing-1 text-xs">
           <thead>
             <tr>
-              <th className="w-16" />
+              <th className="w-20" />
               {ids.map((id) => (
                 <th key={id} className="px-0 pb-1 text-center text-[10px] font-normal tracking-tight text-mist"
                   {...tip({
@@ -51,7 +52,10 @@ export default function BiomeStrip({
           <tbody>
             {rows.map((row) => (
               <tr key={row.name}>
-                <th className="whitespace-nowrap pr-2 text-left font-normal text-mist-bright">{row.name}</th>
+                <th className="whitespace-nowrap pr-2 text-left font-normal text-mist-bright">
+                  <span className="mr-1.5 inline-block h-2 w-2 rounded-sm" style={{ background: testColor(row.id) }} />
+                  {row.name}
+                </th>
                 {row.values.map((v, i) => (
                   <td
                     key={ids[i]}

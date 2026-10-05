@@ -17,6 +17,18 @@
      is strictly monochrome. */
   --color-glow: #7fd6c2;
   --color-line: #232325;
+
+  /* One colour per scored test, drawn from the island itself: foliage for
+     micro-contents, water for physics, berry for the voxel build, sand for
+     placement, twilight for cycles. Used wherever the tests are told apart
+     (stacked scores, score profile). Validated as a set for colour-blind and
+     normal-vision separation in each mode, and kept clear of the placement
+     graph's fail red, which means "broken" and nothing else. */
+  --color-test-contents: #4fa66a;
+  --color-test-physics: #4a8fd2;
+  --color-test-voxel: #9d3576;
+  --color-test-placement: #bc8626;
+  --color-test-cycles: #8b77d4;
 }
 
 :root[data-theme="day"] {
@@ -26,6 +38,11 @@
   --color-mist-bright: #121214;
   --color-glow: #2f8f78;
   --color-line: #dbdbde;
+  --color-test-contents: #2f8a4c;
+  --color-test-physics: #2a74c4;
+  --color-test-voxel: #a03569;
+  --color-test-placement: #b07d10;
+  --color-test-cycles: #6a55c0;
 }
 
 html,

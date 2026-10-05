@@ -21,7 +21,7 @@ export default function ResultsPanel({ results }: { results: ModelResults }) {
   const rows = b
     ? (["WC003", "WC004"] as const)
         .filter((id) => b[id])
-        .map((id) => ({ name: short(id), values: b[id] as number[] }))
+        .map((id) => ({ id, name: short(id), values: b[id] as number[] }))
     : [];
 
   return (
