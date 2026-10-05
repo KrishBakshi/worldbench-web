@@ -18,6 +18,12 @@
   --color-glow: #7fd6c2;
   --color-line: #232325;
 
+  /* Neutral data greys. Every mark that isn't the point (the other models,
+     a bar's empty track, a heatmap's low end) is drawn in these, so the glow
+     accent is left to mean one thing: the best, or what you're looking at. */
+  --color-data-muted: #3a3a3f;
+  --color-data-mid: #5c5c63;
+
   /* One shade per scored test, all from the glow accent's own hue: a single
      teal ramp, strongest for the heaviest test and stepping back to the
      lightest. A chart tells its tests apart by shade, never by a second hue,
@@ -40,6 +46,8 @@
   --color-mist-bright: #121214;
   --color-glow: #2f8f78;
   --color-line: #dbdbde;
+  --color-data-muted: #c9c9ce;
+  --color-data-mid: #a3a3aa;
   --color-test-contents: #075a4d;
   --color-test-physics: #187363;
   --color-test-voxel: #308c7a;
