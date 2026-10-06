@@ -1,13 +1,23 @@
 ---
 title: "About worldbench"
-description: "What worldbench is, and what kind of reasoning it actually tests."
+description: "What worldbench is, what kind of reasoning it tests, and how every world is judged."
 ---
 
 ## What is worldbench
 
-worldbench is a **human-as-judge benchmark**: one natural-language prompt,
-several models, no rubric, no automated scorer. You look at what each model
-built and decide for yourself whether it holds together.
+worldbench is a benchmark for **3D world generation**: one natural-language
+prompt, many models, and one self-contained Three.js file from each. Every
+world is run in a real browser and graded against a fixed rubric of about
+two hundred items by a panel of AI judges: an **LLM** reads the source
+code, a **VLM** looks at the running world, **agents** frame each biome and
+re-check disputed evidence, and **deterministic metrics** measure what the
+pixels actually do. Scores are out of 280 and absolute, so every model on
+the [leaderboard](/leaderboard) is measured against the description, not
+against each other.
+
+The worlds are still here to explore. A score tells you how much of the
+description a model built; walking around the island shows you what it
+feels like.
 
 ## What it actually tests
 
@@ -48,9 +58,58 @@ about several different things at once:
   HTML file, no build step, no separate assets, CDN Three.js only. It has
   to just open in a browser and run.
 
-There's no scoring because there's no single correct island, only a
-hand-tuned reference built by a human, and your own eyes to compare it
-against a range of very different automated attempts.
+There's no single correct island, so nothing is scored against a template.
+Each test checks whether a property of the description holds in the world
+the model built, however it chose to build it.
+
+## How it's judged
+
+Every world goes through the same five tests, 280 points in total. The
+maximums are fixed, so totals compare directly across models.
+
+- **Voxel island** (40): is it the thing that was asked for? A cube-built
+  island floating in a void, water resting on solid ground, and no visible
+  rendering bugs.
+- **Coverage and placement** (20): is every biome built, and does each sit
+  next to the right neighbours at the right height?
+- **Micro-contents** (100): does each biome contain what makes it that
+  biome? Cacti on the desert flats, mangroves in the swamp, a glowing crater
+  on the volcano.
+- **Physics** (100): do things look right and move the right way? Rain
+  falls, rivers flow, clouds drift, lava glows.
+- **Temporal cycles** (20): do the day/night cycle and the seasons actually
+  change the world, rather than only a label on screen?
+
+Each world runs in a headless browser with its randomness seeded, so every
+run builds the same island, and its clock is pinned so time of day and
+season can be set on demand. From there, several judges work on the same
+evidence:
+
+- **LLM as a judge, over the code.** A language model reads the source and
+  has to quote the exact lines that build each item. Every quote is checked
+  word for word against the file, so a judge can't award points for code
+  that isn't there.
+- **VLM as a judge, over the frames.** A vision model looks at captured
+  views of the running world: fixed camera angles, four times of day, four
+  seasons, and close-ups of every biome. A blind pass first confirms each
+  close-up really shows the biome it claims to.
+- **Agents as judges.** A browser agent uses the world's own legend and
+  camera to frame each biome, and when the frames show something the code
+  check missed, a code-search agent goes back through a read-only copy of
+  the source to settle it.
+- **Measured, not asked.** Motion, day/night brightness and seasonal colour
+  are measured from the pixels themselves. "It moves" only counts if
+  consecutive frames actually differ.
+
+Most items are judged twice, once from the code and once from the running
+world, because each catches the other's mistakes: code can read right and
+render wrong, and a screenshot can be framed on the wrong region. Every
+verdict, quote and frame is kept alongside the score, so any result can be
+traced back to its evidence.
+
+The hand-tuned reference island isn't part of the grading. It's there for
+people: a picture of what the prompt is reaching for, to compare the
+generated worlds against by eye.
 
 ## Reading the island
 
