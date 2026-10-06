@@ -1,6 +1,6 @@
 const links = [
   { label: "X", href: "https://x.com/KrishBakshi_" },
-  { label: "LinkedIn", href: "https://linkedin.com/in/krish-bakshi-8b85b6314/" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/krish-bakshi/" },
   { label: "GitHub", href: "https://github.com/KrishBakshi" },
 ];
 
