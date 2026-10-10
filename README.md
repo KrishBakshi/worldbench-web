@@ -8,12 +8,17 @@ A single prompt for generating a self-contained Three.js `world.html` of a
 floating biome island, plus a small site for browsing and interacting with
 what different models produce from it.
 
-There is no scoring, no schema, no CLI, just the prompt and your own eyes.
+Every world is scored by the sibling
+[worldbench](https://github.com/KrishBakshi/worldbench) harness: it runs each
+`world.html` in a headless browser and grades it against a fixed 280-point
+rubric with AI judges (an LLM over the source, a VLM over frames of the
+running world, browser and code-search agents, and deterministic pixel
+metrics). This site only displays those scores; it computes none itself.
 
 The model only ever sees the natural-language prompt. It is never shown
 [`outputs/create.html`](outputs/create.html). That file is a hand-tuned
-**ideal world** for humans: a qualitative target when judging outputs and
-when refining the prompt. Models invent their own scale and layout; a
+**ideal world** for humans: a qualitative target when looking at outputs and
+when refining the prompt. It plays no part in grading. Models invent their own scale and layout; a
 result can differ or be better if the ecological relationships and climate
 logic hold.
 
@@ -24,11 +29,12 @@ npm install
 npm run dev
 ```
 
-Three pages:
+Four pages:
 - **Home**: a minimal floating-island animation, then "See Recent Tests"
   (up to 4 pinned tests).
-- **About**: what worldbench is, the reasoning it tests, the biome legend
-  image, and a placement graph of how the biomes relate to each other.
+- **About**: what worldbench is, the reasoning it tests, how each world is
+  judged, the biome legend image, and a placement graph of how the biomes
+  relate to each other.
 - **View Tests**: a grid of every test, searchable by name, model, or
   provider and filterable by provider badge, each card opening into its own
   page with an intro clip, the test date, and the live island preview
@@ -37,7 +43,13 @@ Three pages:
   opens a grid that puts it side by side with the worlds from up to five
   other tests, added one panel at a time. The address follows the grid
   (`/compare/<slug>+<slug>+…`, first slug is the anchor test), so a
-  comparison survives a refresh and can be shared.
+  comparison survives a refresh and can be shared. A test with scores also
+  shows a **Scores** panel: its profile across the five tests, per-biome
+  scores, and its placement graph.
+- **Leaderboard**: every scored model ranked, the top three first, then the
+  full ranking, each test on its own, how each total splits across the
+  tests, and a table of exact scores. Every chart has a legend and hover
+  details.
 
 ## Adding a test
 
@@ -58,6 +70,10 @@ Drop a new folder in `public/tests/<slug>/` with:
   one island at noon against another at midnight. The raw `world.html` is
   what "open in dedicated window" serves, day/night cycle and all.
 - optionally `intro.mp4` / `intro.webm` / `intro.gif`
+- optionally `results.json`: that model's scores, exported from the
+  worldbench harness (`scripts/export_to_web.py`). Without it the test still
+  lists, with no Scores panel. The leaderboard reads the harness's
+  `public/leaderboard.json`, exported alongside.
 
 No code changes needed, the site reads `public/tests/` at build time.
 

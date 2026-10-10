@@ -1,14 +1,19 @@
 # worldbench
 
-> One prompt, every model, one floating island each. worldbench is a
-> human-as-judge benchmark: a single natural-language prompt asks each model to
+> One prompt, every model, one floating island each. worldbench is a benchmark
+> for 3D world generation: a single natural-language prompt asks each model to
 > generate a self-contained Three.js scene of a floating, multi-biome voxel
-> island — from text alone, with no image, no schema, and no reference file —
-> and the resulting worlds are shown side by side so a person can judge for
-> themselves which model's world actually holds together.
+> island from text alone, with no image, no schema, and no reference file. Every
+> world is run in a headless browser and graded against a fixed rubric by AI
+> judges: an LLM over the source code, a VLM over frames of the running world,
+> agents that frame each biome and re-check disputed evidence, and
+> deterministic metrics on the pixels.
 
-There is no rubric and no automated scorer. Every model receives the exact same
-prompt and must produce a single `world.html` that opens in a browser and runs.
+Scores are out of 280 across five tests (voxel island 40, coverage and placement
+20, micro-contents 100, physics 100, temporal cycles 20), with fixed maximums,
+so totals compare directly across models; see [the leaderboard](/leaderboard).
+Every model receives the exact same prompt and must produce a single
+`world.html` that opens in a browser and runs.
 Getting it right is more than scene styling; the prompt encodes a placement
 graph and an ecology, so the model has to reason about several things at once:
 
@@ -27,7 +32,8 @@ graph and an ecology, so the model has to reason about several things at once:
   camera baked into the single file.
 
 The site is front-end only: browse the worlds, open each one live in an iframe,
-and compare how different models interpreted the same instruction.
+compare how different models interpreted the same instruction, and see each
+model's scores test by test.
 
 ## The prompt
 
@@ -45,11 +51,11 @@ and compare how different models interpreted the same instruction.
 Each links to a detail page with intro media and the live `world.html` embedded
 in an iframe; the raw output is served at `/tests/<slug>/world.html`.
 
-- [Claude Fable 5 (Anthropic)](/tests/fable)
+- [Claude Fable 5 (Anthropic)](/tests/claude-fable-5)
 - [GPT-5.6 Sol (OpenAI)](/tests/gpt-5-6-sol)
 - [Gemini 3.1 Pro (Google)](/tests/gemini-3-1-pro)
-- [Grok 4.5 Fast (xAI)](/tests/grok-4-5-fast)
-- [Qwen 3.8 Max Preview (Alibaba)](/tests/qwen-3-8-max-prev)
+- [Grok 4.5 (xAI)](/tests/grok-4-5)
+- [Qwen 3.8 Max (Alibaba)](/tests/qwen-3-8-max)
 - [Kimi K2.7 (Moonshot AI)](/tests/kimi-k-2-7)
 - [Kimi K3 (Moonshot AI)](/tests/kimi-k-3)
 - [GLM 5 Turbo (Z.ai)](/tests/glm-5-turbo)

@@ -17,6 +17,32 @@
      is strictly monochrome. */
   --color-glow: #7fd6c2;
   --color-line: #232325;
+
+  /* Neutral data greys. Every mark that isn't the point (the other models,
+     a bar's empty track, a heatmap's low end) is drawn in these, so the glow
+     accent is left to mean one thing: the best, or what you're looking at. */
+  --color-data-muted: #3a3a3f;
+  --color-data-mid: #5c5c63;
+  /* Heatmap value ink by score band (below 6, 6 to 8, 8 and up). Cells run
+     grey to accent, which lightens in dark mode and darkens in light mode,
+     so each mode flips to the other ink at its own point. */
+  --heat-ink-lo: #f0f0f2;
+  --heat-ink-mid: #060607;
+  --heat-ink-hi: #060607;
+
+  /* One shade per scored test, all from the glow accent's own hue: a single
+     teal ramp, strongest for the heaviest test and stepping back to the
+     lightest. A chart tells its tests apart by shade, never by a second hue,
+     so every plot stays one colour and sits quietly in the monochrome
+     chrome. Solid steps rather than opacity, so they don't wash out; spaced
+     evenly in lightness (checked: monotone, >= 0.06 apart, the faintest
+     still >= 2:1 on the page). Legends, 2px gaps, tooltips and the table
+     carry the identity alongside. */
+  --color-test-contents: #83e7d1;
+  --color-test-physics: #67c5b1;
+  --color-test-voxel: #51a392;
+  --color-test-placement: #3c8374;
+  --color-test-cycles: #2c675b;
 }
 
 :root[data-theme="day"] {
@@ -26,6 +52,16 @@
   --color-mist-bright: #121214;
   --color-glow: #2f8f78;
   --color-line: #dbdbde;
+  --color-data-muted: #c9c9ce;
+  --color-data-mid: #a3a3aa;
+  --heat-ink-lo: #121214;
+  --heat-ink-mid: #121214;
+  --heat-ink-hi: #ffffff;
+  --color-test-contents: #075a4d;
+  --color-test-physics: #187363;
+  --color-test-voxel: #308c7a;
+  --color-test-placement: #50a291;
+  --color-test-cycles: #70b6a6;
 }
 
 html,
@@ -327,5 +363,32 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .prose .is-highlighted {
     animation: none;
+  }
+}
+
+/* Chart hover (components/results/ChartHover.tsx). Marks outside the hovered
+   group fade back so the hovered test, model or biome reads across the whole
+   chart; !important because some marks carry an inline opacity of their own. */
+[data-groups] {
+  transition: opacity 150ms ease;
+}
+
+[data-groups][data-dim] {
+  opacity: 0.18 !important;
+}
+
+[data-tip] {
+  cursor: default;
+  outline: none;
+}
+
+[data-tip]:focus-visible {
+  outline: 1px solid var(--color-glow);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-groups] {
+    transition: none;
   }
 }
