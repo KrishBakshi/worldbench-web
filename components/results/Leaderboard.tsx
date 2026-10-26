@@ -1,12 +1,13 @@
 import { createElement } from "react";
 import Link from "next/link";
-import { getLeaderboard } from "@/lib/results";
+import { getLeaderboard, getResults } from "@/lib/results";
 import { getAllTests } from "@/lib/tests";
 import { getProvider } from "@/lib/providers";
 import { getProviderIcon } from "@/components/icons";
 import ChartHover from "@/components/results/ChartHover";
 import { member, tip, type TipRow } from "@/components/results/tip";
-import { testColor } from "@/components/results/series";
+import TestExplorer, { type ExplorerTest } from "@/components/results/TestExplorer";
+import { BIOME_NODES } from "@/lib/biomes";
 
 type Board = NonNullable<ReturnType<typeof getLeaderboard>>;
 type Test = Board["tests"][number];
@@ -32,7 +33,7 @@ function columnFormat(board: Board) {
 }
 
 /** The leader is the only bar in the accent; every other bar is a neutral
- *  grey, so green means "best" and nothing else. */
+ *  grey, so the accent means "best" and nothing else. */
 const LEAD = "var(--color-glow)";
 const REST = "var(--color-data-mid)";
 
@@ -199,129 +200,39 @@ function Rankings({
   );
 }
 
-/** 3. One small ranked chart per test, heaviest first, so a model that is
- *  strong in one place and weaker in another shows up where totals hide it.
- *  The cards share one hover layer: pointing at a model lights it up in all
- *  five at once. */
-function PerTest({
-  board,
-  info,
-  leaders,
-}: {
-  board: Board;
-  info: Record<string, Info>;
-  leaders: ReturnType<typeof getLeaders>;
-}) {
-  const f = columnFormat(board);
+/** 3. Where the points come from, then each test on its own, heaviest first:
+ *  the cards pick all tests (each total stacked by test) or one test and, where
+ *  it is scored per biome, a biome within it; one chart re-ranks to match. Built
+ *  here on the server from each model's results.json, then handed to the
+ *  client component as plain data. */
+function explorerTests(board: Board): ExplorerTest[] {
   const total = board.tests.reduce((s, t) => s + t.max, 0);
-  return (
-    <ChartHover>
-      <Legend
-        items={[
-          { label: "Top score in that test", color: LEAD },
-          { label: "Other models", color: REST },
-        ]}
-      />
-      <div className="grid gap-4 md:grid-cols-2">
-        {byWeight(board.tests).map((t) => {
-          const rows = board.models
-            .filter((m) => m.tests[t.id] != null)
-            .map((m) => ({ slug: m.slug, score: m.tests[t.id] }))
-            .sort((a, b) => b.score - a.score);
-          const best = leaders[t.id]?.best;
-          return (
-            <div key={t.id} className="rounded-lg border border-line p-4">
-              <div className="flex items-baseline justify-between gap-3">
-                <h3 className="text-sm text-mist-bright">{t.name}</h3>
-                <span className="shrink-0 text-xs tabular-nums text-mist">
-                  out of {t.max} · {Math.round((100 * t.max) / total)}% of total
-                </span>
-              </div>
-              <ul className="mt-3 space-y-1.5">
-                {rows.map((r) => {
-                  const rank = rows.findIndex((x) => x.score === r.score) + 1;
-                  return (
-                    <li
-                      key={r.slug}
-                      className="grid grid-cols-[minmax(0,7.5rem)_1fr_2.75rem] items-center gap-x-2 text-xs"
-                      {...tip({
-                        title: info[r.slug]?.title ?? r.slug,
-                        key: r.slug,
-                        rows: [
-                          [t.name, `${f[t.id](r.score)} / ${t.max}`],
-                          ["Share", `${share(r.score, t.max).toFixed(1)}%`],
-                          ["Rank in test", `#${rank} of ${rows.length}`],
-                        ],
-                      })}
-                    >
-                      <Link href={`/tests/${r.slug}`} className="truncate text-mist hover:text-mist-bright">
-                        {info[r.slug]?.title ?? r.slug}
-                      </Link>
-                      <div className="h-1.5">
-                        <div
-                          className="h-full rounded-r-full"
-                          style={{ width: `${share(r.score, t.max)}%`, background: r.score === best ? LEAD : REST }}
-                        />
-                      </div>
-                      <span className="text-right tabular-nums text-mist-bright">{f[t.id](r.score)}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          );
-        })}
-      </div>
-    </ChartHover>
-  );
+  const results = Object.fromEntries(board.models.map((m) => [m.slug, getResults(m.slug)]));
+  return byWeight(board.tests).map((t) => {
+    const overall = Object.fromEntries(
+      board.models.filter((m) => m.tests[t.id] != null).map((m) => [m.slug, m.tests[t.id]]),
+    );
+    const biomes = BIOME_NODES.map((b) => {
+      const scores: Record<string, number> = {};
+      for (const m of board.models) {
+        const r = results[m.slug]?.biomes;
+        const per = r?.[t.id as "WC003" | "WC004"];
+        const i = r?.ids.indexOf(b.id) ?? -1;
+        if (Array.isArray(per) && i >= 0 && per[i] != null) scores[m.slug] = per[i];
+      }
+      return { id: b.id, label: b.label, max: 10, scores };
+    }).filter((s) => Object.keys(s.scores).length > 0);
+    return {
+      id: t.id,
+      name: t.name,
+      max: t.max,
+      weight: Math.round((100 * t.max) / total),
+      subs: [{ id: "all", label: t.name, max: t.max, scores: overall }, ...biomes],
+    };
+  });
 }
 
-/** 4. Each total split into its tests, heaviest first: a bar's length is its
- *  total and each band shows where those points came from. Hovering a band or
- *  a legend key lights that test up across every model. */
-function Composition({ board, info }: { board: Board; info: Record<string, Info> }) {
-  const f = columnFormat(board);
-  const max = board.models[0]?.max ?? 1;
-  const tests = byWeight(board.tests);
-  return (
-    <ChartHover className="rounded-lg border border-line p-4 sm:p-5">
-      <Legend items={tests.map((t) => ({ label: `${t.name} (${t.max})`, color: testColor(t.id), hover: t.id }))} />
-      <ol className="space-y-2">
-        {board.models.map((m) => (
-          <li key={m.slug} className="grid grid-cols-[minmax(0,9rem)_1fr_3rem] items-center gap-x-3 text-xs sm:grid-cols-[minmax(0,13rem)_1fr_3.5rem]">
-            <Link href={`/tests/${m.slug}`} className="truncate text-mist hover:text-mist-bright">
-              {info[m.slug]?.title ?? m.slug}
-            </Link>
-            <div className="flex h-4 gap-0.5">
-              {tests.map((t) => {
-                const v = m.tests[t.id] ?? 0;
-                return (
-                  <div
-                    key={t.id}
-                    className="h-full last:rounded-r-sm"
-                    style={{ width: `${share(v, max)}%`, background: testColor(t.id) }}
-                    {...tip({
-                      title: info[m.slug]?.title ?? m.slug,
-                      key: t.id,
-                      rows: [
-                        [t.name, `${f[t.id](v)} / ${t.max}`, testColor(t.id)],
-                        ["Of this model's total", `${share(v, m.total).toFixed(0)}%`],
-                        ["Model total", `${m.total.toFixed(1)} / ${m.max}`],
-                      ],
-                    })}
-                  />
-                );
-              })}
-            </div>
-            <span className="text-right tabular-nums text-mist-bright">{m.total.toFixed(1)}</span>
-          </li>
-        ))}
-      </ol>
-    </ChartHover>
-  );
-}
-
-/** 5. The exact numbers: total first, then tests heaviest first. The top
+/** 4. The exact numbers: total first, then tests heaviest first. The top
  *  score in each column is marked rather than the gaps. */
 function Table({
   board,
@@ -390,7 +301,7 @@ function Section({ title, note, children }: { title: string; note?: string; chil
 }
 
 /** The cross-model leaderboard, most important first: the top three, the full
- *  ranking, each test on its own, how totals are built, then exact numbers. */
+ *  ranking, how totals are built and each test on its own, then exact numbers. */
 export default function Leaderboard() {
   const board = getLeaderboard();
   if (!board || board.models.length === 0) return null;
@@ -403,11 +314,17 @@ export default function Leaderboard() {
       <Section title="Rankings" note={`Share of the ${board.models[0].max} available points, across all ${board.tests.length} tests.`}>
         <Rankings board={board} info={info} leaders={leaders} />
       </Section>
-      <Section title="By test" note="Each test ranked on its own, heaviest first. Bars run to that test's maximum.">
-        <PerTest board={board} info={info} leaders={leaders} />
-      </Section>
-      <Section title="Where the points come from" note="Each model's total, split into its tests.">
-        <Composition board={board} info={info} />
+      <Section title="By test" note="Where each total comes from, then any one test on its own. Micro-contents and physics break down further, biome by biome.">
+        <TestExplorer
+          tests={explorerTests(board)}
+          models={board.models.map((m) => ({
+            slug: m.slug,
+            title: info[m.slug]?.title ?? m.slug,
+            total: m.total,
+            max: m.max,
+            tests: m.tests,
+          }))}
+        />
       </Section>
       <Section title="All scores" note="Bold values are the top score in their column.">
         <Table board={board} info={info} leaders={leaders} />
