@@ -113,8 +113,8 @@ thing the grid exists to avoid.
   npm run dev` to run it.
 - Keep the home page minimal and sparse: no extra copy over the floating
   island animation beyond the header and "See Recent Tests".
-- The header has exactly four links: Home, About, View Tests, and
-  Leaderboard. Don't add more without being asked.
+- The header has exactly four links: Home, About, Evaluations
+  (`/tests`), and Leaderboard. Don't add more without being asked.
 - Prefix every commit subject with its kind: `Add:` for new files or
   features, `Update:` for changes to something that already works, `Fix:`
   for corrections, `Remove:` for deletions, `Refactor:` for behaviour-neutral

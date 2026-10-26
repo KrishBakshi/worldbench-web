@@ -14,6 +14,9 @@ Every world is scored by the sibling
 rubric with AI judges (an LLM over the source, a VLM over frames of the
 running world, browser and code-search agents, and deterministic pixel
 metrics). This site only displays those scores; it computes none itself.
+The method is described in the paper,
+[*WorldBench: Evaluating LLMs on Three.js Voxel World Generation*](https://arxiv.org/abs/2610.10622)
+(arXiv:2610.10622).
 
 The model only ever sees the natural-language prompt. It is never shown
 [`outputs/create.html`](outputs/create.html). That file is a hand-tuned
@@ -30,12 +33,14 @@ npm run dev
 ```
 
 Four pages:
-- **Home**: a minimal floating-island animation, then "See Recent Tests"
-  (up to 4 pinned tests).
+- **Home**: the WorldBench wordmark over the floating island, the paper's
+  subtitle, an "Explore Evaluations" button, and one quiet row of references
+  (paper, code, dataset, Space, and a "Cite" that copies the BibTeX). Those
+  URLs live in `lib/links.ts`.
 - **About**: what worldbench is, the reasoning it tests, how each world is
-  judged, the biome legend image, and a placement graph of how the biomes
-  relate to each other.
-- **View Tests**: a grid of every test, searchable by name, model, or
+  judged, the biome legend image, a placement graph of how the biomes
+  relate to each other, and the paper's citation.
+- **Evaluations** (`/tests`): a grid of every test, searchable by name, model, or
   provider and filterable by provider badge, each card opening into its own
   page with an intro clip, the test date, and the live island preview
   (HUD chrome off) embedded below it. **Open in dedicated window** serves
