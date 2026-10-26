@@ -5,6 +5,7 @@ import BiomeGraph from "@/components/about/BiomeGraph";
 import PromptDropdown from "@/components/about/PromptDropdown";
 import IslandInfo from "@/components/about/IslandInfo";
 import SocialLinks from "@/components/about/SocialLinks";
+import Citation from "@/components/about/Citation";
 import HashHighlight from "@/components/about/HashHighlight";
 import TableOfContents from "@/components/ui/TableOfContents";
 import ScrollToTopButton from "@/components/ScrollToTopButton";
@@ -51,6 +52,7 @@ export default function AboutPage() {
             PromptDropdown: () => <PromptDropdown prompt={promptText} />,
             IslandInfo,
             SocialLinks,
+            Citation,
           }}
         />
       </div>
