@@ -1,6 +1,7 @@
 import GravityStarsBackground from "@/components/backgrounds/GravityStarsBackground";
 import HomeIsland from "@/components/HomeIsland";
 import ExploreEvaluationsButton from "@/components/ExploreEvaluationsButton";
+import ReferenceLinks from "@/components/ReferenceLinks";
 import RevealText from "@/components/RevealText";
 import RevealFade from "@/components/RevealFade";
 
@@ -11,17 +12,26 @@ export default function HomePage() {
           recent-tests row, not just the hero. */}
       <GravityStarsBackground className="fixed inset-0 z-0" mouseGravity="repel" />
       <div className="relative z-10 flex h-full flex-col">
-        <section className="flex min-h-0 flex-1 flex-col items-center justify-center px-6 pb-28 sm:pb-0">
-          {/* Layered hero: the heading sits behind the floating island, up near
-              the top so the mountain rises into it. Line one is solid; line two
-              is a hollow outline that hovers over the peaks. */}
-          <div className="relative aspect-[3/2] w-full max-w-3xl sm:aspect-auto sm:h-[52vh]">
-            {/* The heading animates in character-by-character (MagicUI
+        <section className="flex min-h-0 flex-1 flex-col items-center justify-center px-6 pb-28 sm:pb-6">
+          {/* Eyebrow: what kind of thing this is, before the name says which. */}
+          <RevealText
+            as="p"
+            animation="blurIn"
+            startOnView={false}
+            delay={0.05}
+            className="text-center font-display text-[10px] uppercase tracking-[0.4em] text-mist sm:text-xs"
+          >
+            A benchmark for 3D world generation
+          </RevealText>
+
+          {/* Layered hero: the name sits behind the floating island, so the
+              mountain rises into the wordmark. "World" in ink, "Bench" in the
+              paper's accent blue; the two halves land a beat apart. */}
+          <div className="relative mt-3 aspect-[4/3] w-full max-w-4xl sm:mt-4 sm:aspect-auto sm:h-[46vh]">
+            {/* The name animates in character-by-character (MagicUI
                 TextAnimate), but only on the first load — RevealText renders it
-                statically on a client-side return (see useHeroReveal). Each line
-                is its own run so the outline styling on line two is kept and it
-                lands a beat after line one. */}
-            <h1 className="absolute inset-x-0 top-[-8%] z-0 flex flex-col items-center gap-1.5 text-center font-display text-2xl leading-[0.95] font-bold tracking-[-0.015em] sm:top-[-6%] sm:gap-2 sm:text-4xl md:text-5xl">
+                statically on a client-side return (see useHeroReveal). */}
+            <h1 className="absolute inset-x-0 top-0 z-0 flex items-baseline justify-center font-display text-[15vw] leading-[0.85] font-bold tracking-[-0.045em] sm:text-8xl md:text-9xl lg:text-[min(10rem,17vh)]">
               <RevealText
                 as="span"
                 by="character"
@@ -30,38 +40,40 @@ export default function HomePage() {
                 delay={0.15}
                 className="text-mist-bright"
               >
-                Intelligence Has Landscapes
+                World
               </RevealText>
               <RevealText
                 as="span"
                 by="character"
                 animation="blurInUp"
                 startOnView={false}
-                delay={0.4}
-                className="text-transparent [-webkit-text-stroke:1.25px_var(--color-mist-bright)] sm:[-webkit-text-stroke:1.5px_var(--color-mist-bright)]"
+                delay={0.35}
+                className="text-glow"
               >
-                Explore Them
+                Bench
               </RevealText>
             </h1>
 
             <HomeIsland />
           </div>
 
-          {/* Tagline caption, then the call to action. The caption blurs in
-              (MagicUI TextAnimate) a beat after the heading settles — first load
+          {/* The paper's subtitle as the tagline: says plainly what is
+              measured. Blurs in a beat after the name settles — first load
               only, via RevealText. */}
           <RevealText
-            as="h1"
+            as="p"
             animation="blurIn"
             startOnView={false}
             delay={1.05}
-            className="mt-10 text-center font-display text-xs uppercase tracking-[0.35em] text-mist sm:text-sm"
+            className="mt-20 max-w-md text-center text-sm text-mist sm:mt-[9vh] sm:text-base"
           >
-            Pushing intelligent reasoning into the unknown
+            Evaluating LLMs on Three.js voxel world generation
           </RevealText>
-          {/* The liquid-fill CTA fades up last, also first load only. */}
-          <RevealFade className="mt-6" delay={1.35}>
+
+          {/* The CTA, then the quiet reference row beneath it, fade up last. */}
+          <RevealFade className="mt-6 flex flex-col items-center gap-5" delay={1.35}>
             <ExploreEvaluationsButton />
+            <ReferenceLinks />
           </RevealFade>
         </section>
       </div>

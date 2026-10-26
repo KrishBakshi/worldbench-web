@@ -23,7 +23,7 @@ export default function HomeIsland() {
   }, []);
 
   return (
-    <div className="absolute inset-0 z-10 translate-y-[14%] sm:translate-y-[11%]">
+    <div className="absolute inset-0 z-10 translate-y-[12%] sm:translate-y-[20%]">
       <div className={`relative h-full w-full ${reveal ? "animate-island-reveal" : ""}`}>
         <Image
           src="/island.webp"

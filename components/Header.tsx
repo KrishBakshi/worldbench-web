@@ -10,7 +10,7 @@ import MobileNav from "@/components/MobileNav";
 const links = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
-  { href: "/tests", label: "View Tests" },
+  { href: "/tests", label: "Evaluations" },
   { href: "/leaderboard", label: "Leaderboard" },
 ];
 

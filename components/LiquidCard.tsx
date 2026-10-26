@@ -36,7 +36,7 @@ export default function LiquidCard({
         // Rest: deep void. Hover fill: solid mist-bright — white in dark mode,
         // near-black in day — so the liquid reads as a full invert, not gray.
         "[--liquid-button-background-color:color-mix(in_srgb,var(--color-void-deep)_60%,transparent)]",
-        "[--liquid-button-color:#ffffff] [[data-theme=day]_&]:[--liquid-button-color:#121214]",
+        "[--liquid-button-color:#ffffff] [[data-theme=day]_&]:[--liquid-button-color:#11151b]",
         "transition-[border-color] hover:border-mist/60",
         className,
       )}

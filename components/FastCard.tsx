@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
  * grid can have a couple dozen of these on screen at once — a sweeping fill
  * animation per card reads as laggy rather than premium at that density.
  * This swaps to a plain background/border flip with a snap transition, so
- * hover feels instant. The liquid fill stays on the homepage CTA
- * (ExploreEvaluationsButton) where it's a single, deliberate button.
+ * hover feels instant. The homepage CTA (ExploreEvaluationsButton) uses the
+ * same flip, so the button and the cards it leads to hover alike.
  *
  * `bg-mist-bright` / `text-void` are used deliberately over raw black/white:
  * both tokens invert per theme (light fill + dark text in dark mode, dark

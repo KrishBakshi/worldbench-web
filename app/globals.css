@@ -9,59 +9,64 @@
      starfield's canvas colour fade so both land together. */
   --theme-swap: 320ms;
 
-  --color-void: #0b0b0c;
-  --color-void-deep: #060607;
-  --color-mist: #9a9a9e;
-  --color-mist-bright: #f0f0f2;
-  /* Diagram-only accent (BiomeGraph water edges). Not used by UI chrome, which
-     is strictly monochrome. */
-  --color-glow: #7fd6c2;
-  --color-line: #232325;
+  /* Ink and paper. The neutrals carry a faint cool cast so they sit with the
+     accent instead of reading as flat grey, the way printed ink does next to
+     a blue figure. */
+  --color-void: #0b0d11;
+  --color-void-deep: #07080b;
+  --color-mist: #8a929e;
+  --color-mist-bright: #eef1f5;
+  /* The one accent: the paper's own blue (genc, #3B6EA8, in the WorldBench
+     LaTeX), lifted for the dark page and used as-is on the light one, so the
+     site and the paper it links to read as one piece. UI chrome stays
+     monochrome; the accent marks the name, the lead and the data. */
+  --color-glow: #7aa7e0;
+  --color-line: #1f242c;
 
   /* Neutral data greys. Every mark that isn't the point (the other models,
-     a bar's empty track, a heatmap's low end) is drawn in these, so the glow
+     a bar's empty track, a heatmap's low end) is drawn in these, so the
      accent is left to mean one thing: the best, or what you're looking at. */
-  --color-data-muted: #3a3a3f;
-  --color-data-mid: #5c5c63;
+  --color-data-muted: #333a45;
+  --color-data-mid: #555e6c;
   /* Heatmap value ink by score band (below 6, 6 to 8, 8 and up). Cells run
      grey to accent, which lightens in dark mode and darkens in light mode,
      so each mode flips to the other ink at its own point. */
-  --heat-ink-lo: #f0f0f2;
-  --heat-ink-mid: #060607;
-  --heat-ink-hi: #060607;
+  --heat-ink-lo: #eef1f5;
+  --heat-ink-mid: #07080b;
+  --heat-ink-hi: #07080b;
 
-  /* One shade per scored test, all from the glow accent's own hue: a single
-     teal ramp, strongest for the heaviest test and stepping back to the
+  /* One shade per scored test, all from the accent's own hue: a single blue
+     ramp, strongest for the heaviest test and stepping back to the
      lightest. A chart tells its tests apart by shade, never by a second hue,
      so every plot stays one colour and sits quietly in the monochrome
      chrome. Solid steps rather than opacity, so they don't wash out; spaced
-     evenly in lightness (checked: monotone, >= 0.06 apart, the faintest
-     still >= 2:1 on the page). Legends, 2px gaps, tooltips and the table
-     carry the identity alongside. */
-  --color-test-contents: #83e7d1;
-  --color-test-physics: #67c5b1;
-  --color-test-voxel: #51a392;
-  --color-test-placement: #3c8374;
-  --color-test-cycles: #2c675b;
+     evenly in lightness (monotone, about 0.1 apart, the faintest still
+     >= 2:1 on the page). Legends, 2px gaps, tooltips and the table carry
+     the identity alongside. */
+  --color-test-contents: #b4cdf0;
+  --color-test-physics: #8fb2e3;
+  --color-test-voxel: #6c95d0;
+  --color-test-placement: #4f7bb8;
+  --color-test-cycles: #3a6198;
 }
 
 :root[data-theme="day"] {
-  --color-void: #f0f0f2;
+  --color-void: #f5f6f8;
   --color-void-deep: #ffffff;
-  --color-mist: #63636a;
-  --color-mist-bright: #121214;
-  --color-glow: #2f8f78;
-  --color-line: #dbdbde;
-  --color-data-muted: #c9c9ce;
-  --color-data-mid: #a3a3aa;
-  --heat-ink-lo: #121214;
-  --heat-ink-mid: #121214;
+  --color-mist: #5a6270;
+  --color-mist-bright: #11151b;
+  --color-glow: #3b6ea8;
+  --color-line: #dadfe6;
+  --color-data-muted: #c7cdd6;
+  --color-data-mid: #9da6b3;
+  --heat-ink-lo: #11151b;
+  --heat-ink-mid: #11151b;
   --heat-ink-hi: #ffffff;
-  --color-test-contents: #075a4d;
-  --color-test-physics: #187363;
-  --color-test-voxel: #308c7a;
-  --color-test-placement: #50a291;
-  --color-test-cycles: #70b6a6;
+  --color-test-contents: #173a66;
+  --color-test-physics: #24508a;
+  --color-test-voxel: #3b6ea8;
+  --color-test-placement: #6690c4;
+  --color-test-cycles: #8fb0d8;
 }
 
 html,
