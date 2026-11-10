@@ -82,6 +82,18 @@ Drop a new folder in `public/tests/<slug>/` with:
 
 No code changes needed, the site reads `public/tests/` at build time.
 
+### Adding a model end to end
+
+1. In this repo, branch `bench/<slug>` from `origin/main` and add
+   `public/tests/<slug>/` with `meta.mdx`, `world.html` and the generated
+   `world-preview.html`.
+2. In the [worldbench](https://github.com/KrishBakshi/worldbench) harness,
+   branch `bench/<slug>`, copy `world.html` to `inputs/<slug>/world.html` and
+   run `uv run python -m eval.run <slug>`, then `eval.gaps find <slug>` (repair
+   and re-check until clean).
+3. Export with `uv run python scripts/export_to_web.py <slug>`, keep only that
+   model's `results.json` and leaderboard row here, and push both branches.
+
 ## Using the prompt yourself
 
 1. Open [`prompts/prompt.md`](prompts/prompt.md) (see also

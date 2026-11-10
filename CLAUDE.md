@@ -121,6 +121,32 @@ thing the grid exists to avoid.
   restructuring, `Docs:` for prose-only edits. Keep the rest of the subject
   imperative and short (`Add: Opus 5 test metadata`), with the detail in the
   body.
+- **A model's bench branch carries that model's scores and nothing else.**
+  Branch `bench/<slug>` from `origin/main`. Its commit adds
+  `public/tests/<slug>/results.json` plus that one model's row in
+  `public/leaderboard.json`. Never stack one model's bench branch on another
+  model's, and never put a pending model's results or leaderboard row on
+  another model's branch. `export_to_web.py` rewrites the leaderboard with every
+  exported model, so if another model's scores are still unmerged, drop its row
+  before committing. If two bench branches both edit the one-line
+  `leaderboard.json`, that conflict gets resolved when the second one merges.
+  It is not a reason to combine the two. (A Gemini 3.8 Flash branch was once
+  stacked on the Muse Wonder branch to avoid that conflict, so the Gemini PR
+  shipped Muse Wonder's scores too.)
+- **Adding a model is two branches in two repos, both `bench/<slug>`** (slug
+  is the folder name, e.g. `claude-fable-5-2`, not the display name).
+  1. Here: branch from `origin/main`; commit `public/tests/<slug>/` (`meta.mdx`,
+     `world.html`, generated `world-preview.html`) as `Add: <Model> test`.
+  2. `../worldbench`: branch from `origin/main`, copy `world.html` to
+     `inputs/<slug>/world.html`, run `uv run python -m eval.run <slug>`, then
+     `uv run python -m eval.gaps find <slug>` (repair until clean). Commit
+     `outputs/<slug>/` alone as `add: <slug> scored outputs (<score>/280)`.
+  3. Back here: `uv run python scripts/export_to_web.py <slug>` (run from
+     `../worldbench`), then keep only this model's `results.json` and
+     leaderboard row (see the rule above) and commit `Add: <Model> scores`.
+  4. Push either branch only when the run is genuine: no failed checks,
+     crashed capture, judge outages or unfinished rechecks, and `eval.gaps`
+     clean. Never push a partial or failing run, and never hand-edit scores.
 - Keep `README.md` current. When a major commit is requested — a new page,
   a user-facing feature, or a change to the test frontmatter / folder
   layout — check whether the README still describes things accurately and
